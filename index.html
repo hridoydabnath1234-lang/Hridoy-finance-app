@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>My Finance v10.2</title>
+<title>My Finance v11.0</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -11,7 +11,7 @@
 *{box-sizing:border-box}
 body{margin:0;background:#eef1f7;font-family:system-ui;color:#172033}
 .app{width:100%;max-width:100%;min-height:100vh;margin:0 auto;background:#f6f7fb;position:relative}
-.top{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:17px 17px 17px 17px;padding-top:calc(17px + env(safe-area-inset-top))}
+.top{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:17px;padding-top:calc(17px + env(safe-area-inset-top))}
 .brand{display:flex;align-items:center;gap:10px}
 .logo{width:44px;height:44px;border-radius:14px;background:#ffffff25;display:grid;place-items:center}
 .brand h1{margin:0;font-size:21px}
@@ -61,16 +61,17 @@ body{margin:0;background:#eef1f7;font-family:system-ui;color:#172033}
 .fg label{display:block;font-size:11px;font-weight:750;color:#667085;margin-bottom:5px}
 .input{width:100%;padding:11px 12px;border:1px solid #e1e5ed;border-radius:12px;outline:none;background:#fff}
 .modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.primary,.danger,.secondary{border:0;border-radius:12px;padding:12px;font-weight:800;cursor:pointer}
+.primary,.danger,.secondary,.success{border:0;border-radius:12px;padding:12px;font-weight:800;cursor:pointer}
 .primary{background:#4f46e5;color:#fff}
 .danger{background:#fee2e2;color:#b91c1c}
 .secondary{background:#eef2ff;color:#4338ca}
-.nav{position:fixed;bottom:0;left:0;right:0;width:100%;height:calc(67px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:#fff;border-top:1px solid #e5e8f0;display:grid;grid-template-columns:repeat(4,1fr);z-index:20}
-.nav button{border:0;background:none;color:#98a2b3;font-size:10px;cursor:pointer}
-.nav i{display:block;font-size:17px;margin-bottom:3px}
+.success{background:#dcfce7;color:#15803d}
+.nav{position:fixed;bottom:0;left:0;right:0;width:100%;height:calc(67px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:#fff;border-top:1px solid #e5e8f0;display:grid;grid-template-columns:repeat(5,1fr);z-index:20}
+.nav button{border:0;background:none;color:#98a2b3;font-size:9px;cursor:pointer}
+.nav i{display:block;font-size:16px;margin-bottom:3px}
 .nav button.active{color:#4f46e5;font-weight:800}
 .fab{position:fixed;bottom:calc(76px + env(safe-area-inset-bottom));right:20px;z-index:21;width:55px;height:55px;border:0;border-radius:17px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;font-size:22px;box-shadow:0 10px 25px #4f46e555;cursor:pointer}
-.archive,.note{background:#fff;border:1px solid #e5e8f0;border-radius:15px;padding:13px;margin-bottom:9px}
+.archive,.note,.loan-item{background:#fff;border:1px solid #e5e8f0;border-radius:15px;padding:13px;margin-bottom:9px}
 .archive h3{margin:0;font-size:14px}
 .astats{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:8px}
 .astats div{background:#f7f8fb;border-radius:9px;padding:7px;font-size:9px;color:#7b8798}
@@ -91,6 +92,15 @@ body{margin:0;background:#eef1f7;font-family:system-ui;color:#172033}
 .lockbtn{width:100%;margin-top:10px;border:0;border-radius:13px;padding:13px;font-weight:800;background:#4f46e5;color:#fff;cursor:pointer}
 .lockbtn.secondary{background:#eef2ff;color:#4338ca}
 .lockerror{min-height:17px;margin-top:7px;color:#dc2626;font-size:11px}
+.forgotlink{display:block;margin-top:12px;color:#4f46e5;font-size:12px;text-decoration:none;cursor:pointer;font-weight:600}
+.alert-box{background:#fef2f2;border:1px solid #fecaca;border-radius:14px;padding:12px;margin-bottom:12px;color:#991b1b;display:none}
+.alert-box h4{margin:0 0 6px;font-size:13px;display:flex;align-items:center;gap:6px}
+.alert-box ul{margin:0;padding-left:18px;font-size:12px}
+.badge-paona{background:#e0e7ff;color:#3730a3;padding:3px 8px;border-radius:8px;font-size:10px;font-weight:bold}
+.badge-dena{background:#fee2e2;color:#991b1b;padding:3px 8px;border-radius:8px;font-size:10px;font-weight:bold}
+.confirm-box{position:fixed;inset:0;background:#00000066;z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.confirm-box.show{display:flex}
+.confirm-card{background:#fff;border-radius:18px;padding:20px;width:100%;max-width:320px;text-align:center}
 </style>
 </head>
 <body>
@@ -103,10 +113,24 @@ body{margin:0;background:#eef1f7;font-family:system-ui;color:#172033}
     <div id="lockFields">
       <input id="lockPin" class="lockinput" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="••••••">
       <input id="lockPin2" class="lockinput" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="Confirm PIN" style="margin-top:9px;display:none">
+      <input id="lockSecret" class="lockinput" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="Secret Recovery PIN" style="margin-top:9px;display:none;font-size:16px;letter-spacing:2px">
     </div>
     <div id="lockError" class="lockerror"></div>
     <button id="lockMainBtn" class="lockbtn" onclick="lockMain()">Set PIN</button>
     <button id="lockCancelBtn" class="lockbtn secondary" onclick="lockCancel()" style="display:none">Cancel</button>
+    <a id="forgotBtn" class="forgotlink" onclick="handleForgotPin()" style="display:none">Forgot PIN?</a>
+  </div>
+</div>
+
+<div class="confirm-box" id="confirmModal">
+  <div class="confirm-card">
+    <i class="fa-solid fa-circle-question" style="font-size:40px;color:#4f46e5;margin-bottom:10px"></i>
+    <h3 style="margin:0 0 8px">পাওনা/দেনা পরিশোধ নিশ্চিতকরণ</h3>
+    <p style="font-size:12px;color:#667085;margin-bottom:18px">আপনি কি নিশ্চিত যে এই টাকাটি সম্পূর্ণ পরিশোধ হয়ে গেছে? এটি আর্কাইভে স্থানান্তরিত হবে।</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button class="secondary" onclick="closeConfirm(false)">না</button>
+      <button class="primary" onclick="closeConfirm(true)">হ্যাঁ, পরিশোধিত</button>
+    </div>
   </div>
 </div>
 
@@ -116,7 +140,7 @@ body{margin:0;background:#eef1f7;font-family:system-ui;color:#172033}
       <div class="logo"><i class="fa-solid fa-wallet"></i></div>
       <div>
         <h1>My Finance</h1>
-        <small>Personal Finance Manager · v10.2</small>
+        <small>Personal Finance Manager · v11.0</small>
       </div>
       <button class="gear" onclick="openSettings()"><i class="fa-solid fa-gear"></i></button>
     </div>
@@ -129,6 +153,11 @@ body{margin:0;background:#eef1f7;font-family:system-ui;color:#172033}
 
   <main class="main">
     <section id="homePage" class="page active">
+      <div id="homeDueAlert" class="alert-box">
+        <h4><i class="fa-solid fa-bell"></i> পরিশোধের সময় পার হয়ে গেছে!</h4>
+        <ul id="dueAlertList"></ul>
+      </div>
+
       <div class="card">
         <div class="label">Closing Balance</div>
         <div id="balance" class="balance">₮ 0.00</div>
@@ -161,6 +190,24 @@ body{margin:0;background:#eef1f7;font-family:system-ui;color:#172033}
         <button onclick="openTx('income')">+ Add</button>
       </div>
       <div id="transactions" class="card"></div>
+    </section>
+
+    <section id="loansPage" class="page">
+      <div class="head">
+        <h2><i class="fa-solid fa-hand-holding-dollar"></i> পাওনা ও দেনা</h2>
+        <button onclick="openLoanModal()">+ নতুন এন্ট্রি</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+        <div class="card" style="padding:10px;text-align:center;margin:0">
+          <span style="font-size:11px;color:#748095">মোট পাওনা</span>
+          <b id="totalPaona" style="display:block;color:#3730a3;font-size:15px;margin-top:2px">₮ 0.00</b>
+        </div>
+        <div class="card" style="padding:10px;text-align:center;margin:0">
+          <span style="font-size:11px;color:#748095">মোট দেনা</span>
+          <b id="totalDena" style="display:block;color:#991b1b;font-size:15px;margin-top:2px">₮ 0.00</b>
+        </div>
+      </div>
+      <div id="loansList"></div>
     </section>
 
     <section id="reportsPage" class="page">
@@ -196,15 +243,16 @@ body{margin:0;background:#eef1f7;font-family:system-ui;color:#172033}
 
   <nav class="nav">
     <button data-page="home" class="active" onclick="nav('home')"><i class="fa-solid fa-house"></i>Home</button>
-    <button data-page="transactions" onclick="nav('transactions')"><i class="fa-solid fa-list"></i>Transactions</button>
+    <button data-page="transactions" onclick="nav('transactions')"><i class="fa-solid fa-list"></i>Txns</button>
+    <button data-page="loans" onclick="nav('loans')"><i class="fa-solid fa-hand-holding-dollar"></i>পাওনা/দেনা</button>
     <button data-page="reports" onclick="nav('reports')"><i class="fa-solid fa-chart-column"></i>Reports</button>
-    <button data-page="notebook" onclick="nav('notebook')"><i class="fa-solid fa-book"></i>Notebook</button>
+    <button data-page="notebook" onclick="nav('notebook')"><i class="fa-solid fa-book"></i>Notes</button>
   </nav>
 </div>
 
 <div id="feedback" class="feedback"></div>
 
-<!-- Modal Dialogs -->
+<!-- Modals -->
 <div id="txModal" class="modalbg">
   <div class="modal">
     <div class="mh"><h3 id="txTitle">Add Income</h3><button class="close" onclick="closeM('txModal')">×</button></div>
@@ -217,6 +265,28 @@ body{margin:0;background:#eef1f7;font-family:system-ui;color:#172033}
     <div class="modal-actions">
       <button id="deleteTx" class="danger" style="display:none" onclick="deleteEditing()">Delete</button>
       <button class="primary" onclick="saveTx()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="loanModal" class="modalbg">
+  <div class="modal">
+    <div class="mh"><h3 id="loanModalTitle">পাওনা / দেনা এন্ট্রি</h3><button class="close" onclick="closeM('loanModal')">×</button></div>
+    <div class="fg">
+      <label>টাইপ (ধরন)</label>
+      <select id="loanType" class="input">
+        <option value="paona">পাওনা (আমি পাবো)</option>
+        <option value="dena">দেনা (আমি দেবো)</option>
+      </select>
+    </div>
+    <div class="fg"><label>ব্যক্তির নাম</label><input id="loanPerson" class="input" placeholder="যেমন: রহিম সাহেব"></div>
+    <div class="fg"><label>টাকার পরিমাণ</label><input id="loanAmount" class="input" type="number" min="0" step="0.01"></div>
+    <div class="fg"><label>লেনদেনের তারিখ ও সময়</label><input id="loanEntryDate" class="input" type="datetime-local"></div>
+    <div class="fg"><label>পরিশোধের নির্ধারিত তারিখ ও সময় (Due Date)</label><input id="loanDueDate" class="input" type="datetime-local"></div>
+    <div class="fg"><label>নোট/বিবরণ (ঐচ্ছিক)</label><textarea id="loanNote" class="input" rows="2"></textarea></div>
+    <div class="modal-actions">
+      <button id="delLoanBtn" class="danger" style="display:none" onclick="deleteLoan()">ডিলিট</button>
+      <button class="primary" onclick="saveLoan()">সেভ করুন</button>
     </div>
   </div>
 </div>
@@ -276,7 +346,7 @@ const app=initializeApp({apiKey:"AIzaSyCZAB_ThepFLzLHtrPG6PbLkKUeskxfwaE",authDo
 db=getFirestore(app),auth=getAuth(app),provider=new GoogleAuthProvider();
 enableIndexedDbPersistence(db).catch(e=>console.warn('Offline Firestore persistence:',e.code||e));
 
-let tx=[],notes=[],cats=[],archives={},currency="₮",user=null,unsub=null,editId=null,type="income",selected="",cm=new Date().getMonth(),cy=new Date().getFullYear(),hc,rc;
+let tx=[],notes=[],cats=[],archives={},loans=[],currency="₮",user=null,unsub=null,editId=null,editLoanId=null,type="income",selected="",cm=new Date().getMonth(),cy=new Date().getFullYear(),hc,rc,loanToSettle=null;
 const $=x=>document.getElementById(x),
 I=['🌙 Moon Salary','💼 Mainamoti Salary','➕ Mainamoti Extra','🔄 Mainamoti Cross-Matching','🌃 Moon Night'],
 E=['🛒 Grocery','💸 Expense','⚡ Electricity Bill','🔥 Gas Bill','📱 Mobile Data','❤️ Donation','💊 Medicine'];
@@ -287,38 +357,47 @@ function closeM(x){$(x).classList.remove('show')}
 function gid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
 function ld(s){let p=(s||'').split('-').map(Number);return p.length===3?new Date(p[0],p[1]-1,p[2]):new Date(NaN)}
 function today(){let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function nowISO(){
+  let d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16);
+}
 function money(n){return currency+' '+(Number(n)||0).toFixed(2)}
 function esc(s){let d=document.createElement('div');d.textContent=String(s??'');return d.innerHTML}
 function defaults(){let n=new Set(cats.map(x=>x.name));I.forEach(x=>{if(!n.has(x))cats.push({name:x,type:'income'})});E.forEach(x=>{if(!n.has(x))cats.push({name:x,type:'expense'})})}
-function clean(){tx=(Array.isArray(tx)?tx:[]).filter(x=>x&&!x.isCarryForward&&(x.type==='income'||x.type==='expense'));notes=Array.isArray(notes)?notes:[];cats=Array.isArray(cats)?cats:[];archives=archives&&typeof archives==='object'&&!Array.isArray(archives)?archives:{}}
+function clean(){
+  tx=(Array.isArray(tx)?tx:[]).filter(x=>x&&!x.isCarryForward&&(x.type==='income'||x.type==='expense'));
+  notes=Array.isArray(notes)?notes:[];
+  cats=Array.isArray(cats)?cats:[];
+  loans=Array.isArray(loans)?loans:[];
+  archives=archives&&typeof archives==='object'&&!Array.isArray(archives)?archives:{};
+}
 
-function save(){clean();localStorage.setItem('myFinanceData_v10',JSON.stringify({version:10,transactions:tx,notes,categories:cats,archives,currency}))}
+function save(){clean();localStorage.setItem('myFinanceData_v11',JSON.stringify({version:11,transactions:tx,notes,categories:cats,archives,loans,currency}))}
 function load(){
   try{
-    let r=localStorage.getItem('myFinanceData_v10');
+    let r=localStorage.getItem('myFinanceData_v11');
     if(r){
-      let d=JSON.parse(r);tx=d.transactions||[];notes=d.notes||[];cats=d.categories||[];archives=d.archives||{};currency=d.currency||'₮'
+      let d=JSON.parse(r);tx=d.transactions||[];notes=d.notes||[];cats=d.categories||[];archives=d.archives||{};loans=d.loans||[];currency=d.currency||'₮';
     }else{
-      let o=localStorage.getItem('myFinanceData_v9');
-      if(o){let d=JSON.parse(o);tx=(d.transactions||[]).filter(x=>!x.isCarryForward&&(x.type==='income'||x.type==='expense'));notes=d.notes||[];cats=d.categories||[];currency=d.currency||'₮'}
+      let o=localStorage.getItem('myFinanceData_v10');
+      if(o){let d=JSON.parse(o);tx=d.transactions||[];notes=d.notes||[];cats=d.categories||[];archives=d.archives||{};currency=d.currency||'₮'}
     }
   }catch(e){console.error(e)}
-  defaults();save()
+  defaults();save();
 }
 
 function mt(y,m){let s=new Date(y,m,1),e=new Date(y,m+1,1),a=tx.filter(x=>{let d=ld(x.date);return !isNaN(d)&&d>=s&&d<e}),income=0,expense=0;a.forEach(x=>x.type==='income'?income+=+x.amount:expense+=+x.amount);return{a,income,expense,net:income-expense}}
 function opening(y,m){let s=new Date(y,m,1),n=0;tx.forEach(x=>{let d=ld(x.date);if(!isNaN(d)&&d<s)n+=x.type==='income'?+x.amount:-+x.amount});return n}
 function closing(y,m){let t=mt(y,m);return opening(y,m)+t.net}
 
-async function cloud(){if(!user)return;try{save();await setDoc(doc(db,'users',user.uid),{version:10,transactions:tx,notes,categories:cats,archives,currency,updatedAt:serverTimestamp()},{merge:true})}catch(e){console.error(e);msg('Cloud sync failed')}}
-function apply(d){tx=d.transactions||[];notes=d.notes||[];cats=d.categories||[];archives=d.archives||{};currency=d.currency||'₮';defaults();clean();save()}
+async function cloud(){if(!user)return;try{save();await setDoc(doc(db,'users',user.uid),{version:11,transactions:tx,notes,categories:cats,archives,loans,currency,updatedAt:serverTimestamp()},{merge:true})}catch(e){console.error(e);msg('Cloud sync failed')}}
+function apply(d){tx=d.transactions||[];notes=d.notes||[];cats=d.categories||[];archives=d.archives||{};loans=d.loans||[];currency=d.currency||'₮';defaults();clean();save()}
 async function listen(){if(unsub)unsub();if(!user)return;unsub=onSnapshot(doc(db,'users',user.uid),s=>{if(s.exists()){apply(s.data());render(false)}},console.error)}
 
 async function login(){
   try{
     let r=await signInWithPopup(auth,provider),s=await getDoc(doc(db,'users',r.user.uid));
     if(s.exists())apply(s.data());
-    else{tx=[];notes=[];cats=[];archives={};currency='₮';defaults();save();await cloud()}
+    else{tx=[];notes=[];cats=[];archives={};loans=[];currency='₮';defaults();save();await cloud()}
     await listen();render();msg('Cloud account connected')
   }catch(e){if(e.code!=='auth/popup-closed-by-user')msg('Login failed')}
 }
@@ -330,7 +409,7 @@ onAuthStateChanged(auth,async u=>{
     try{
       let s=await getDoc(doc(db,'users',u.uid));
       if(s.exists())apply(s.data());
-      else{tx=[];notes=[];cats=[];archives={};currency='₮';defaults();save();await cloud()}
+      else{tx=[];notes=[];cats=[];archives={};loans=[];currency='₮';defaults();save();await cloud()}
       await listen()
     }catch(e){console.error(e)}
   }else load();
@@ -349,7 +428,7 @@ function archive(force=false){
     let y=Math.floor(i/12),m=i%12,k=y+'-'+String(m+1).padStart(2,'0');
     if(!seen.has(k)){
       let t=mt(y,m);
-      archives[k]={openingBalance:opening(y,m),income:t.income,expense:t.expense,net:t.net,closingBalance:closing(y,m),transactionCount:t.a.length,archivedAt:new Date().toISOString(),timestampType:'UTC'}
+      archives[k]={openingBalance:opening(y,m),income:t.income,expense:t.expense,net:t.net,closingBalance:closing(y,m),transactionCount:t.a.length,settledLoans:[],archivedAt:new Date().toISOString()}
     }
   });
   save();if(user)cloud();if(force){renderArchives();msg('Archive refreshed')}
@@ -387,11 +466,156 @@ function report(){
   $('catReport').innerHTML=a.sort((x,y)=>(y[1].income+y[1].expense)-(x[1].income+x[1].expense)).map(([c,v])=>`<div class="reportrow"><span>${esc(c)}</span><span>${v.income?`<b class="inc">+${esc(money(v.income))}</b>`:''} ${v.expense?`<b class="exp">−${esc(money(v.expense))}</b>`:''}<div class="progress"><i style="width:${(v.income+v.expense)/max*100}%"></i></div></span></div>`).join('')
 }
 
+// PAONA & DENA (LOANS & DEBTS) FEATURE
+function openLoanModal(id=null){
+  if(id){
+    let l=loans.find(x=>x.id===id);if(!l)return;
+    editLoanId=l.id;
+    $('loanModalTitle').textContent='পাওনা / দেনা এডিট';
+    $('loanType').value=l.type;
+    $('loanPerson').value=l.person;
+    $('loanAmount').value=l.amount;
+    $('loanEntryDate').value=l.entryDate||nowISO();
+    $('loanDueDate').value=l.dueDate||'';
+    $('loanNote').value=l.note||'';
+    $('delLoanBtn').style.display='block';
+  }else{
+    editLoanId=null;
+    $('loanModalTitle').textContent='পাওনা / দেনা নতুন এন্ট্রি';
+    $('loanType').value='paona';
+    $('loanPerson').value='';
+    $('loanAmount').value='';
+    $('loanEntryDate').value=nowISO();
+    $('loanDueDate').value='';
+    $('loanNote').value='';
+    $('delLoanBtn').style.display='none';
+  }
+  openM('loanModal');
+}
+
+function saveLoan(){
+  let type=$('loanType').value,
+      person=$('loanPerson').value.trim(),
+      amount=Number($('loanAmount').value),
+      entryDate=$('loanEntryDate').value,
+      dueDate=$('loanDueDate').value,
+      note=$('loanNote').value.trim();
+
+  if(!person||!amount||amount<=0||!dueDate){
+    msg('দয়া করে নাম, টাকার পরিমাণ এবং পরিশোধের তারিখ সঠিকভাবে দিন');
+    return;
+  }
+
+  if(editLoanId){
+    let i=loans.findIndex(x=>x.id===editLoanId);
+    if(i>=0)loans[i]={...loans[i],type,person,amount,entryDate,dueDate,note};
+  }else{
+    loans.push({id:gid(),type,person,amount,entryDate,dueDate,note,status:'pending'});
+  }
+
+  save();closeM('loanModal');renderLoans();checkDueAlerts();if(user)cloud();
+  msg('পাওনা/দেনা সংরক্ষণ করা হয়েছে');
+}
+
+function deleteLoan(){
+  if(!editLoanId)return;
+  if(!confirm('এই পাওনা/দেনার এন্ট্রি টি মুছে ফেলতে চান?'))return;
+  loans=loans.filter(x=>x.id!==editLoanId);
+  save();closeM('loanModal');renderLoans();checkDueAlerts();if(user)cloud();
+  msg('এন্ট্রি ডিলিট করা হয়েছে');
+}
+
+function renderLoans(){
+  let paonaTotal=0,denaTotal=0;
+  let activeLoans=loans.filter(l=>l.status==='pending');
+
+  activeLoans.forEach(l=>{
+    if(l.type==='paona')paonaTotal+=+l.amount;
+    else denaTotal+=+l.amount;
+  });
+
+  $('totalPaona').textContent=money(paonaTotal);
+  $('totalDena').textContent=money(denaTotal);
+
+  if(!activeLoans.length){
+    $('loansList').innerHTML='<div class="card empty">কোনো চলমান পাওনা বা দেনার হিসাব নেই।</div>';
+    return;
+  }
+
+  let now=new Date().toISOString();
+  $('loansList').innerHTML=activeLoans.map(l=>{
+    let isOverdue=l.dueDate && l.dueDate < now;
+    let badge = l.type==='paona' ? '<span class="badge-paona">পাওনা</span>' : '<span class="badge-dena">দেনা</span>';
+    return `<div class="loan-item" style="${isOverdue?'border:1px solid #fca5a5;background:#fff5f5;':''}">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>${badge} <b style="margin-left:5px;font-size:14px">${esc(l.person)}</b></div>
+        <div style="font-weight:900;font-size:15px;color:${l.type==='paona'?'#3730a3':'#991b1b'}">${money(l.amount)}</div>
+      </div>
+      <div class="meta" style="margin-top:6px">
+        এন্ট্রি: ${l.entryDate?l.entryDate.replace('T',' '):'N/A'}<br>
+        <b style="color:${isOverdue?'#dc2626':'#4b5563'}">পরিশোধের সময়: ${l.dueDate?l.dueDate.replace('T',' '):'N/A'} ${isOverdue?'(সময় পার হয়ে গেছে!)':''}</b>
+        ${l.note?`<br>নোট: ${esc(l.note)}`:''}
+      </div>
+      <div style="display:flex;gap:6px;margin-top:10px">
+        <button class="success" style="flex:1;padding:8px;font-size:11px" onclick="askSettle('${l.id}')"><i class="fa-solid fa-check"></i> পরিশোধ হয়েছে</button>
+        <button class="secondary" style="padding:8px 12px;font-size:11px" onclick="openLoanModal('${l.id}')">✎ এডিট</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function askSettle(id){
+  loanToSettle=id;
+  $('confirmModal').classList.add('show');
+}
+
+function closeConfirm(confirmed){
+  $('confirmModal').classList.remove('show');
+  if(confirmed && loanToSettle){
+    settleLoan(loanToSettle);
+  }
+  loanToSettle=null;
+}
+
+function settleLoan(id){
+  let index=loans.findIndex(l=>l.id===id);
+  if(index===-1)return;
+
+  let l=loans[index];
+  l.status='settled';
+  l.settledAt=new Date().toISOString();
+
+  // Save to Current Month Archive Document
+  let d=new Date();
+  let k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+  archives[k] = archives[k] || {openingBalance:opening(d.getFullYear(),d.getMonth()),income:0,expense:0,net:0,closingBalance:0,transactionCount:0,settledLoans:[]};
+  archives[k].settledLoans = archives[k].settledLoans || [];
+  archives[k].settledLoans.push(l);
+
+  loans.splice(index,1);
+  save();renderLoans();renderArchives();checkDueAlerts();if(user)cloud();
+  msg('পরিশোধিত হিসাবে সংরক্ষিত হলো!');
+}
+
+function checkDueAlerts(){
+  let now=new Date().toISOString();
+  let overdues=loans.filter(l=>l.status==='pending' && l.dueDate && l.dueDate < now);
+  
+  let box=$('homeDueAlert'), list=$('dueAlertList');
+  if(overdues.length>0){
+    box.style.display='block';
+    list.innerHTML=overdues.map(l=>`<li><b>${esc(l.person)}</b> - ${money(l.amount)} (${l.type==='paona'?'পাওনা':'দেনা'}) - নির্ধারিত তারিখ ছিল: ${l.dueDate.replace('T',' ')}</li>`).join('');
+  }else{
+    box.style.display='none';
+  }
+}
+
 function renderArchives(){
   let a=Object.entries(archives).sort((x,y)=>y[0].localeCompare(x[0]));
   $('archives').innerHTML=a.length?a.map(([k,v])=>{
     let [y,m]=k.split('-').map(Number);
-    return `<div class="archive"><h3>${new Intl.DateTimeFormat('en-US',{month:'long'}).format(new Date(y,m-1,1))} ${y}<span style="float:right" class="${v.closingBalance>=0?'inc':'exp'}">${esc(money(v.closingBalance))}</span></h3><div class="astats"><div>Opening<b>${esc(money(v.openingBalance))}</b></div><div>Income<b>${esc(money(v.income))}</b></div><div>Expense<b>${esc(money(v.expense))}</b></div><div>Net<b>${esc(money(v.net))}</b></div><div>Transactions<b>${v.transactionCount}</b></div><div>Closing<b>${esc(money(v.closingBalance))}</b></div></div></div>`
+    let settledHtml = (v.settledLoans && v.settledLoans.length)?`<div style="margin-top:9px;padding-top:8px;border-top:1px dashed #cbd5e1"><b style="font-size:11px;color:#475569">পরিশোধিত পাওনা/দেনা রেকর্ড:</b>${v.settledLoans.map(sl=>`<div style="font-size:10px;color:#64748b;margin-top:3px">• ${esc(sl.person)}: ${money(sl.amount)} (${sl.type==='paona'?'পাওনা':'দেনা'}) - পরিশোধিত: ${sl.settledAt?sl.settledAt.slice(0,10):''}</div>`).join('')}</div>`:'';
+    return `<div class="archive"><h3>${new Intl.DateTimeFormat('en-US',{month:'long'}).format(new Date(y,m-1,1))} ${y}<span style="float:right" class="${v.closingBalance>=0?'inc':'exp'}">${esc(money(v.closingBalance))}</span></h3><div class="astats"><div>Opening<b>${esc(money(v.openingBalance))}</b></div><div>Income<b>${esc(money(v.income))}</b></div><div>Expense<b>${esc(money(v.expense))}</b></div><div>Net<b>${esc(money(v.net))}</b></div><div>Transactions<b>${v.transactionCount||0}</b></div><div>Closing<b>${esc(money(v.closingBalance))}</b></div></div>${settledHtml}</div>`
   }).join(''):'<div class="card empty">No archived months yet.</div>'
 }
 
@@ -399,7 +623,7 @@ function renderNotes(){
   $('notes').innerHTML=notes.length?notes.slice().reverse().map(n=>`<div class="note"><div class="notehead"><b>📝 Note</b><button class="mini" onclick="delNote('${encodeURIComponent(n.id)}')">🗑</button></div><div class="notetext">${esc(n.text)}</div><div class="meta">${esc(n.createdAt)}</div></div>`).join(''):'<div class="card empty">No notes yet.</div>'
 }
 
-function render(doArc=true){clean();defaults();if(doArc)archive();$('monthTitle').textContent=new Intl.DateTimeFormat('en-US',{month:'long',year:'numeric'}).format(new Date(cy,cm,1));renderBalance();renderTx();charts();report();renderArchives();renderNotes();authUI();save()}
+function render(doArc=true){clean();defaults();if(doArc)archive();$('monthTitle').textContent=new Intl.DateTimeFormat('en-US',{month:'long',year:'numeric'}).format(new Date(cy,cm,1));renderBalance();renderTx();charts();report();renderLoans();checkDueAlerts();renderArchives();renderNotes();authUI();save()}
 function nav(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));$(p+'Page').classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===p))}
 
 function openTx(t){editId=null;type=t;selected='';$('txTitle').textContent=t==='income'?'Add Income':'Add Expense';$('txType').value=t;$('txName').value='';$('txAmount').value='';$('txDate').value=today();$('txNote').value='';$('deleteTx').style.display='none';renderCats();openM('txModal')}
@@ -472,8 +696,9 @@ async function pdf(){
   w.remove()
 }
 
-// Local App Lock (Device security)
+// Local App Lock with Secret PIN Recovery
 const LOCK_KEY='myFinanceAppLockHash';
+const SECRET_KEY='myFinanceAppSecretHash';
 let lockMode='unlock';
 
 function lockHash(pin){
@@ -483,38 +708,80 @@ function hasLock(){return !!localStorage.getItem(LOCK_KEY)}
 
 function showLock(mode){
   lockMode=mode;
-  const s=$('lockScreen'),p=$('lockPin'),p2=$('lockPin2'),e=$('lockError'),b=$('lockMainBtn'),c=$('lockCancelBtn');
-  s.style.display='flex';p.value='';p2.value='';e.textContent='';
+  const s=$('lockScreen'),p=$('lockPin'),p2=$('lockPin2'),sec=$('lockSecret'),e=$('lockError'),b=$('lockMainBtn'),c=$('lockCancelBtn'),f=$('forgotBtn');
+  s.style.display='flex';p.value='';p2.value='';sec.value='';e.textContent='';
   if(mode==='setup'){
-    $('lockTitle').textContent='Set App Lock';$('lockHint').textContent='Choose a 4–6 digit PIN for this device.';p2.style.display='block';b.textContent='Set PIN';c.style.display='none';
+    $('lockTitle').textContent='Set App Lock';$('lockHint').textContent='Set a 4–6 digit PIN and a Secret Recovery PIN.';
+    p.placeholder="•••••• (Main PIN)";
+    p2.style.display='block';sec.style.display='block';b.textContent='Set PIN';c.style.display='none';f.style.display='none';
   }else if(mode==='change'){
-    $('lockTitle').textContent='Change PIN';$('lockHint').textContent='Enter a new 4–6 digit PIN.';p2.style.display='block';b.textContent='Change PIN';c.style.display='block';
+    $('lockTitle').textContent='Change PIN';$('lockHint').textContent='Enter new PIN and Recovery PIN.';
+    p.placeholder="•••••• (New PIN)";
+    p2.style.display='block';sec.style.display='block';b.textContent='Change PIN';c.style.display='block';f.style.display='none';
   }else if(mode==='disable'){
-    $('lockTitle').textContent='Disable App Lock';$('lockHint').textContent='Enter your current PIN to turn off the lock.';p2.style.display='none';b.textContent='Disable Lock';c.style.display='block';
+    $('lockTitle').textContent='Disable App Lock';$('lockHint').textContent='Enter your current PIN to turn off lock.';
+    p.placeholder="••••••";
+    p2.style.display='none';sec.style.display='none';b.textContent='Disable Lock';c.style.display='block';f.style.display='none';
+  }else if(mode==='recover'){
+    $('lockTitle').textContent='Recover App Lock';$('lockHint').textContent='Enter your Secret Recovery PIN to reset.';
+    p.placeholder="Secret PIN";
+    p2.style.display='none';sec.style.display='none';b.textContent='Reset Lock';c.style.display='block';f.style.display='none';
   }else{
-    $('lockTitle').textContent='App Locked';$('lockHint').textContent='Enter your PIN to open My Finance.';p2.style.display='none';b.textContent='Unlock';c.style.display='none';
+    $('lockTitle').textContent='App Locked';$('lockHint').textContent='Enter your PIN to open My Finance.';
+    p.placeholder="••••••";
+    p2.style.display='none';sec.style.display='none';b.textContent='Unlock';c.style.display='none';f.style.display='block';
   }
   setTimeout(()=>p.focus(),100)
 }
 
 function lockCancel(){if(hasLock()){closeM('settingsModal')}$('lockScreen').style.display='none'}
 
+function handleForgotPin(){
+  if(!localStorage.getItem(SECRET_KEY)){
+    if(confirm("কোন সিক্রেট রিকভারি পিন পাওয়া যায়নি! আপনি কি অ্যাপ লক পুরোপুরি রিসেট করে ভেতরে ঢুকতে চান?")){
+      localStorage.removeItem(LOCK_KEY);
+      localStorage.removeItem(SECRET_KEY);
+      $('lockScreen').style.display='none';
+      updateLockStatus();
+      msg('App Lock reset successfully');
+    }
+  }else{
+    showLock('recover');
+  }
+}
+
 async function lockMain(){
-  const p=$('lockPin').value.trim(),p2=$('lockPin2').value.trim(),e=$('lockError');
+  const p=$('lockPin').value.trim(),p2=$('lockPin2').value.trim(),sec=$('lockSecret').value.trim(),e=$('lockError');
+  
+  if(lockMode==='recover'){
+    if(!/^\d{4,6}$/.test(p)){e.textContent='সিক্রেট PIN অবশ্যই ৪–৬ সংখ্যার হতে হবে';return}
+    if(await lockHash(p)!==localStorage.getItem(SECRET_KEY)){e.textContent='ভুল সিক্রেট PIN!';return}
+    localStorage.removeItem(LOCK_KEY);
+    localStorage.removeItem(SECRET_KEY);
+    $('lockScreen').style.display='none';
+    updateLockStatus();
+    msg('App Lock reset! You can now set a new PIN.');
+    return;
+  }
+
   if(!/^\d{4,6}$/.test(p)){e.textContent='PIN অবশ্যই ৪–৬ সংখ্যার হতে হবে';return}
   if(lockMode==='setup'||lockMode==='change'){
     if(p!==p2){e.textContent='দুইটি PIN মিলছে না';return}
+    if(!/^\d{4,6}$/.test(sec)){e.textContent='Secret Recovery PIN টিও ৪-৬ সংখ্যার দিন';return}
     if(lockMode==='change'){
       const old=prompt('বর্তমান PIN দিন');
       if(old===null)return;
       if(!/^\d{4,6}$/.test(old)||await lockHash(old)!==localStorage.getItem(LOCK_KEY)){e.textContent='বর্তমান PIN সঠিক নয়';return}
     }
     localStorage.setItem(LOCK_KEY,await lockHash(p));
-    $('lockScreen').style.display='none';updateLockStatus();msg(lockMode==='setup'?'App Lock enabled':'PIN changed');return
+    localStorage.setItem(SECRET_KEY,await lockHash(sec));
+    $('lockScreen').style.display='none';updateLockStatus();msg(lockMode==='setup'?'App Lock & Recovery enabled':'PIN changed');return
   }
   if(lockMode==='disable'){
     if(await lockHash(p)!==localStorage.getItem(LOCK_KEY)){e.textContent='PIN সঠিক নয়';return}
-    localStorage.removeItem(LOCK_KEY);$('lockScreen').style.display='none';updateLockStatus();msg('App Lock disabled');return
+    localStorage.removeItem(LOCK_KEY);
+    localStorage.removeItem(SECRET_KEY);
+    $('lockScreen').style.display='none';updateLockStatus();msg('App Lock disabled');return
   }
   if(await lockHash(p)!==localStorage.getItem(LOCK_KEY)){e.textContent='ভুল PIN';return}
   $('lockScreen').style.display='none';msg('Unlocked')
@@ -530,7 +797,7 @@ function updateLockStatus(){
 function disableLock(){showLock('disable')}
 
 window.addEventListener('load',()=>{updateLockStatus();if(hasLock())showLock('unlock')});
-Object.assign(window,{changeMonth,nav,openTx,changeType,saveTx,editTx,delTx,deleteEditing,addCat,openNote,saveNote,delNote,openSettings,setCurrency,login,logout,pdf,archive,closeM,manageLock,lockMain,lockCancel,disableLock});
+Object.assign(window,{changeMonth,nav,openTx,changeType,saveTx,editTx,delTx,deleteEditing,addCat,openNote,saveNote,delNote,openSettings,setCurrency,login,logout,pdf,archive,closeM,manageLock,lockMain,lockCancel,disableLock,handleForgotPin,openLoanModal,saveLoan,deleteLoan,askSettle,closeConfirm});
 load();render();
 </script>
 <script>
@@ -539,4 +806,4 @@ if('serviceWorker' in navigator){
 }
 </script>
 </body>
-                                                    </html>
+</html>
