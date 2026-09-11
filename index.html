@@ -1,542 +1,77 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>My Finance v10.2</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<style>
-*{box-sizing:border-box}
-body{margin:0;background:#eef1f7;font-family:system-ui;color:#172033}
-.app{width:100%;max-width:100%;min-height:100vh;margin:0 auto;background:#f6f7fb;position:relative}
-.top{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:17px 17px 17px 17px;padding-top:calc(17px + env(safe-area-inset-top))}
-.brand{display:flex;align-items:center;gap:10px}
-.logo{width:44px;height:44px;border-radius:14px;background:#ffffff25;display:grid;place-items:center}
-.brand h1{margin:0;font-size:21px}
-.brand small{opacity:.8}
-.gear{margin-left:auto;border:0;background:#ffffff22;color:#fff;width:40px;height:40px;border-radius:12px;cursor:pointer}
-.month{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
-.month button{border:0;background:#ffffff22;color:#fff;width:37px;height:35px;border-radius:11px;cursor:pointer}
-.mt{font-weight:800}
-.main{padding:13px 13px calc(85px + env(safe-area-inset-bottom))}
-.page{display:none}
-.page.active{display:block}
-.card{background:#fff;border:1px solid #e5e8f0;border-radius:19px;padding:15px;margin-bottom:12px;box-shadow:0 7px 24px #1f29370b}
-.label,.meta{font-size:11px;color:#748095}
-.balance{font-size:30px;font-weight:900;margin:3px 0 12px}
-.pos{color:#16a34a}
-.neg{color:#dc2626}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.stat{background:#f7f8fb;padding:11px;border-radius:13px}
-.stat span{display:block;color:#748095;font-size:11px}
-.stat b{display:block;margin-top:3px;font-size:16px}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:15px}
-.action{padding:14px;border-radius:14px;border:1px solid #e3e7ef;background:#fff;font-weight:800;cursor:pointer}
-.inc{color:#16803a}
-.exp{color:#c02626}
-.head{display:flex;justify-content:space-between;align-items:center;margin:15px 2px 8px}
-.head h2{font-size:15px;margin:0}
-.head button{border:0;background:none;color:#4f46e5;font-weight:750;cursor:pointer}
-.tx{display:flex;gap:8px;align-items:center;padding:11px 0;border-bottom:1px solid #edf0f4}
-.tx:last-child{border:0}
-.ico{width:40px;height:40px;border-radius:12px;background:#f0f3f8;display:grid;place-items:center}
-.tm{flex:1;min-width:0}
-.tn{font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.amt{font-weight:850;font-size:12px}
-.mini{border:0;background:#f0f2f6;width:29px;height:29px;border-radius:8px;cursor:pointer}
-.empty{text-align:center;color:#7b8798;padding:22px 8px;font-size:13px}
-.cat{display:flex;flex-wrap:wrap;gap:6px}
-.tag{border:1px solid #e1e5ed;background:#fff;border-radius:18px;padding:7px 10px;font-size:11px;cursor:pointer}
-.tag.active{background:#4f46e5;color:#fff;border-color:#4f46e5}
-.tag.add{border-style:dashed;color:#4f46e5}
-.modalbg{display:none;position:fixed;inset:0;background:#11182788;z-index:50;align-items:flex-end;justify-content:center}
-.modalbg.show{display:flex}
-.modal{width:100%;max-width:100%;max-height:92vh;overflow:auto;background:#fff;border-radius:24px 24px 0 0;padding:17px;padding-bottom:calc(17px + env(safe-area-inset-bottom))}
-.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.mh h3{margin:0}
-.close{border:0;background:#f0f2f6;width:35px;height:35px;border-radius:10px;cursor:pointer}
-.fg{margin-bottom:12px}
-.fg label{display:block;font-size:11px;font-weight:750;color:#667085;margin-bottom:5px}
-.input{width:100%;padding:11px 12px;border:1px solid #e1e5ed;border-radius:12px;outline:none;background:#fff}
-.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.primary,.danger,.secondary{border:0;border-radius:12px;padding:12px;font-weight:800;cursor:pointer}
-.primary{background:#4f46e5;color:#fff}
-.danger{background:#fee2e2;color:#b91c1c}
-.secondary{background:#eef2ff;color:#4338ca}
-.nav{position:fixed;bottom:0;left:0;right:0;width:100%;height:calc(67px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:#fff;border-top:1px solid #e5e8f0;display:grid;grid-template-columns:repeat(4,1fr);z-index:20}
-.nav button{border:0;background:none;color:#98a2b3;font-size:10px;cursor:pointer}
-.nav i{display:block;font-size:17px;margin-bottom:3px}
-.nav button.active{color:#4f46e5;font-weight:800}
-.fab{position:fixed;bottom:calc(76px + env(safe-area-inset-bottom));right:20px;z-index:21;width:55px;height:55px;border:0;border-radius:17px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;font-size:22px;box-shadow:0 10px 25px #4f46e555;cursor:pointer}
-.archive,.note{background:#fff;border:1px solid #e5e8f0;border-radius:15px;padding:13px;margin-bottom:9px}
-.archive h3{margin:0;font-size:14px}
-.astats{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:8px}
-.astats div{background:#f7f8fb;border-radius:9px;padding:7px;font-size:9px;color:#7b8798}
-.astats b{display:block;color:#172033;font-size:11px;margin-top:2px}
-.notehead{display:flex;justify-content:space-between}
-.notetext{white-space:pre-wrap;font-size:13px;line-height:1.5;margin-top:6px}
-.feedback{position:fixed;top:12px;left:50%;transform:translate(-50%,-160%);z-index:100;background:#111827;color:#fff;padding:9px 13px;border-radius:11px;font-size:12px;transition:.25s}
-.feedback.show{transform:translate(-50%,0)}
-.reportrow{padding:10px 0;border-bottom:1px solid #edf0f4;display:flex;justify-content:space-between}
-.progress{height:6px;background:#edf0f4;border-radius:10px;margin-top:4px}
-.progress i{display:block;height:100%;background:#4f46e5;border-radius:10px}
-#lockScreen{display:none;position:fixed;inset:0;z-index:1000;background:linear-gradient(145deg,#eef1f7,#e7e9f7);align-items:center;justify-content:center;padding:22px}
-.lockbox{width:100%;max-width:100%;background:#fff;border:1px solid #e5e8f0;border-radius:24px;padding:24px;box-shadow:0 18px 50px #1f29371a;text-align:center}
-.lockicon{width:64px;height:64px;border-radius:20px;margin:0 auto 14px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;display:grid;place-items:center;font-size:26px}
-.lockbox h2{margin:0 0 6px;font-size:22px}
-.lockbox p{margin:0 0 18px;color:#748095;font-size:12px}
-.lockinput{width:100%;padding:13px;text-align:center;font-size:22px;letter-spacing:7px;border:1px solid #e1e5ed;border-radius:13px;outline:none}
-.lockbtn{width:100%;margin-top:10px;border:0;border-radius:13px;padding:13px;font-weight:800;background:#4f46e5;color:#fff;cursor:pointer}
-.lockbtn.secondary{background:#eef2ff;color:#4338ca}
-.lockerror{min-height:17px;margin-top:7px;color:#dc2626;font-size:11px}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>HRIDOYS JOURNAL</title>
+  
+  <!-- PWA & Logo Links -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="apple-touch-icon" href="logo.png">
+  <meta name="theme-color" content="#4f46e5">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f3f4f6;
+      color: #1f2937;
+      min-height: 100vh;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+    }
+
+    header {
+      background-color: #4f46e5;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    main {
+      padding: 1rem;
+    }
+
+    .card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      margin-bottom: 1rem;
+    }
+  </style>
 </head>
 <body>
 
-<div id="lockScreen">
-  <div class="lockbox">
-    <div class="lockicon"><i class="fa-solid fa-lock"></i></div>
-    <h2 id="lockTitle">App Lock</h2>
-    <p id="lockHint">Set a 4–6 digit PIN to protect this app on this device.</p>
-    <div id="lockFields">
-      <input id="lockPin" class="lockinput" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="••••••">
-      <input id="lockPin2" class="lockinput" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="Confirm PIN" style="margin-top:9px;display:none">
-    </div>
-    <div id="lockError" class="lockerror"></div>
-    <button id="lockMainBtn" class="lockbtn" onclick="lockMain()">Set PIN</button>
-    <button id="lockCancelBtn" class="lockbtn secondary" onclick="lockCancel()" style="display:none">Cancel</button>
-  </div>
-</div>
-
-<div class="app">
-  <header class="top">
-    <div class="brand">
-      <div class="logo"><i class="fa-solid fa-wallet"></i></div>
-      <div>
-        <h1>My Finance</h1>
-        <small>Personal Finance Manager · v10.2</small>
-      </div>
-      <button class="gear" onclick="openSettings()"><i class="fa-solid fa-gear"></i></button>
-    </div>
-    <div class="month">
-      <button onclick="changeMonth(-1)"><i class="fa-solid fa-chevron-left"></i></button>
-      <div id="monthTitle" class="mt"></div>
-      <button onclick="changeMonth(1)"><i class="fa-solid fa-chevron-right"></i></button>
-    </div>
+  <header>
+    <h1>HRIDOYS JOURNAL</h1>
   </header>
 
-  <main class="main">
-    <section id="homePage" class="page active">
-      <div class="card">
-        <div class="label">Closing Balance</div>
-        <div id="balance" class="balance">₮ 0.00</div>
-        <div class="grid">
-          <div class="stat"><span>Opening Balance</span><b id="opening">₮ 0.00</b></div>
-          <div class="stat"><span>This Month Net</span><b id="net">₮ 0.00</b></div>
-          <div class="stat"><span>Income</span><b id="income" class="inc">₮ 0.00</b></div>
-          <div class="stat"><span>Expense</span><b id="expense" class="exp">₮ 0.00</b></div>
-        </div>
-      </div>
-      <div class="actions">
-        <button class="action inc" onclick="openTx('income')"><i class="fa-solid fa-arrow-down"></i> Income</button>
-        <button class="action exp" onclick="openTx('expense')"><i class="fa-solid fa-arrow-up"></i> Expense</button>
-      </div>
-      <div class="head">
-        <h2>Recent Transactions</h2>
-        <button onclick="nav('transactions')">View all</button>
-      </div>
-      <div id="recent" class="card"></div>
-      <div class="head">
-        <h2>Quick Report</h2>
-        <button onclick="nav('reports')">Reports</button>
-      </div>
-      <div class="card"><canvas id="homeChart" height="190"></canvas></div>
-    </section>
-
-    <section id="transactionsPage" class="page">
-      <div class="head">
-        <h2>Transactions</h2>
-        <button onclick="openTx('income')">+ Add</button>
-      </div>
-      <div id="transactions" class="card"></div>
-    </section>
-
-    <section id="reportsPage" class="page">
-      <div class="head">
-        <h2>Reports</h2>
-        <button onclick="pdf()">PDF</button>
-      </div>
-      <div class="card"><canvas id="reportChart" height="220"></canvas></div>
-      <div class="card">
-        <h3 style="margin-top:0">Category-wise Report</h3>
-        <div id="catReport"></div>
-      </div>
-    </section>
-
-    <section id="archivePage" class="page">
-      <div class="head">
-        <h2><i class="fa-solid fa-box-archive"></i> Archive</h2>
-        <button onclick="archive(true)">Refresh</button>
-      </div>
-      <div id="archives"></div>
-    </section>
-
-    <section id="notebookPage" class="page">
-      <div class="head">
-        <h2><i class="fa-solid fa-book"></i> Notebook</h2>
-        <button onclick="openNote()">+ Add Note</button>
-      </div>
-      <div id="notes"></div>
-    </section>
+  <main>
+    <div class="card">
+      <h2>Welcome to your Personal Finance App</h2>
+      <p>আপনার হিসাব নিখুঁত রাখতে অ্যাপটি ব্যবহার করুন।</p>
+    </div>
   </main>
 
-  <button class="fab" onclick="openTx('income')"><i class="fa-solid fa-plus"></i></button>
-
-  <nav class="nav">
-    <button data-page="home" class="active" onclick="nav('home')"><i class="fa-solid fa-house"></i>Home</button>
-    <button data-page="transactions" onclick="nav('transactions')"><i class="fa-solid fa-list"></i>Transactions</button>
-    <button data-page="reports" onclick="nav('reports')"><i class="fa-solid fa-chart-column"></i>Reports</button>
-    <button data-page="notebook" onclick="nav('notebook')"><i class="fa-solid fa-book"></i>Notebook</button>
-  </nav>
-</div>
-
-<div id="feedback" class="feedback"></div>
-
-<!-- Modal Dialogs -->
-<div id="txModal" class="modalbg">
-  <div class="modal">
-    <div class="mh"><h3 id="txTitle">Add Income</h3><button class="close" onclick="closeM('txModal')">×</button></div>
-    <div class="fg"><label>Type</label><select id="txType" class="input" onchange="changeType(this.value)"><option value="income">Income</option><option value="expense">Expense</option></select></div>
-    <div class="fg"><label>Name / Description</label><input id="txName" class="input"></div>
-    <div class="fg"><label>Amount</label><input id="txAmount" class="input" type="number" min="0" step="0.01"></div>
-    <div class="fg"><label>Date</label><input id="txDate" class="input" type="date"></div>
-    <div class="fg"><label>Category</label><div id="cats" class="cat"></div></div>
-    <div class="fg"><label>Note (optional)</label><textarea id="txNote" class="input" rows="3"></textarea></div>
-    <div class="modal-actions">
-      <button id="deleteTx" class="danger" style="display:none" onclick="deleteEditing()">Delete</button>
-      <button class="primary" onclick="saveTx()">Save</button>
-    </div>
-  </div>
-</div>
-
-<div id="catModal" class="modalbg">
-  <div class="modal">
-    <div class="mh"><h3>Add New Category</h3><button class="close" onclick="closeM('catModal')">×</button></div>
-    <div class="fg"><label>Type</label><select id="catType" class="input"><option value="income">Income</option><option value="expense">Expense</option></select></div>
-    <div class="fg"><label>Category Name</label><input id="catName" class="input"></div>
-    <button class="primary" style="width:100%" onclick="addCat()">Add Category</button>
-  </div>
-</div>
-
-<div id="noteModal" class="modalbg">
-  <div class="modal">
-    <div class="mh"><h3>Add Note</h3><button class="close" onclick="closeM('noteModal')">×</button></div>
-    <div class="fg"><label>Note</label><textarea id="noteInput" class="input" rows="7"></textarea></div>
-    <button class="primary" style="width:100%" onclick="saveNote()">Save Note</button>
-  </div>
-</div>
-
-<div id="settingsModal" class="modalbg">
-  <div class="modal">
-    <div class="mh"><h3>Settings</h3><button class="close" onclick="closeM('settingsModal')">×</button></div>
-    <div class="card">
-      <b>Currency</b>
-      <select id="currency" class="input" style="margin-top:8px" onchange="setCurrency(this.value)">
-        <option value="₮">₮ Taka</option>
-        <option value="৳">৳ Taka</option>
-        <option value="$">$ Dollar</option>
-        <option value="€">€ Euro</option>
-        <option value="£">£ Pound</option>
-        <option value="₹">₹ Rupee</option>
-      </select>
-    </div>
-    <div class="card">
-      <b><i class="fa-solid fa-lock"></i> App Lock</b>
-      <div id="lockStatus" style="margin:9px 0;font-size:12px">Checking...</div>
-      <button id="lockManageBtn" class="secondary" style="width:100%" onclick="manageLock()">Set App Lock</button>
-      <button id="lockDisableBtn" class="danger" style="display:none;width:100%;margin-top:7px" onclick="disableLock()">Disable App Lock</button>
-    </div>
-    <div class="card">
-      <b><i class="fa-solid fa-cloud"></i> Cloud Sync</b>
-      <div id="authStatus" style="margin:9px 0;font-size:12px">Not signed in</div>
-      <button id="login" class="secondary" style="width:100%" onclick="login()">Sign in with Google</button>
-      <button id="logout" class="danger" style="display:none;width:100%;margin-top:7px" onclick="logout()">Logout</button>
-    </div>
-  </div>
-</div>
-
-<script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import{getFirestore,doc,getDoc,setDoc,onSnapshot,serverTimestamp,enableIndexedDbPersistence}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import{getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-const app=initializeApp({apiKey:"AIzaSyCZAB_ThepFLzLHtrPG6PbLkKUeskxfwaE",authDomain:"my-journal-95aa8.firebaseapp.com",projectId:"my-journal-95aa8",storageBucket:"my-journal-95aa8.firebasestorage.app",messagingSenderId:"736347022585",appId:"1:736347022585:web:559d9cfebf55b49ff6ee28",measurementId:"G-PK1NXRPXRW"}),
-db=getFirestore(app),auth=getAuth(app),provider=new GoogleAuthProvider();
-enableIndexedDbPersistence(db).catch(e=>console.warn('Offline Firestore persistence:',e.code||e));
-
-let tx=[],notes=[],cats=[],archives={},currency="₮",user=null,unsub=null,editId=null,type="income",selected="",cm=new Date().getMonth(),cy=new Date().getFullYear(),hc,rc;
-const $=x=>document.getElementById(x),
-I=['🌙 Moon Salary','💼 Mainamoti Salary','➕ Mainamoti Extra','🔄 Mainamoti Cross-Matching','🌃 Moon Night'],
-E=['🛒 Grocery','💸 Expense','⚡ Electricity Bill','🔥 Gas Bill','📱 Mobile Data','❤️ Donation','💊 Medicine'];
-
-function msg(x){let e=$('feedback');e.textContent=x;e.classList.add('show');clearTimeout(msg.t);msg.t=setTimeout(()=>e.classList.remove('show'),2100)}
-function openM(x){$(x).classList.add('show')}
-function closeM(x){$(x).classList.remove('show')}
-function gid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
-function ld(s){let p=(s||'').split('-').map(Number);return p.length===3?new Date(p[0],p[1]-1,p[2]):new Date(NaN)}
-function today(){let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function money(n){return currency+' '+(Number(n)||0).toFixed(2)}
-function esc(s){let d=document.createElement('div');d.textContent=String(s??'');return d.innerHTML}
-function defaults(){let n=new Set(cats.map(x=>x.name));I.forEach(x=>{if(!n.has(x))cats.push({name:x,type:'income'})});E.forEach(x=>{if(!n.has(x))cats.push({name:x,type:'expense'})})}
-function clean(){tx=(Array.isArray(tx)?tx:[]).filter(x=>x&&!x.isCarryForward&&(x.type==='income'||x.type==='expense'));notes=Array.isArray(notes)?notes:[];cats=Array.isArray(cats)?cats:[];archives=archives&&typeof archives==='object'&&!Array.isArray(archives)?archives:{}}
-
-function save(){clean();localStorage.setItem('myFinanceData_v10',JSON.stringify({version:10,transactions:tx,notes,categories:cats,archives,currency}))}
-function load(){
-  try{
-    let r=localStorage.getItem('myFinanceData_v10');
-    if(r){
-      let d=JSON.parse(r);tx=d.transactions||[];notes=d.notes||[];cats=d.categories||[];archives=d.archives||{};currency=d.currency||'₮'
-    }else{
-      let o=localStorage.getItem('myFinanceData_v9');
-      if(o){let d=JSON.parse(o);tx=(d.transactions||[]).filter(x=>!x.isCarryForward&&(x.type==='income'||x.type==='expense'));notes=d.notes||[];cats=d.categories||[];currency=d.currency||'₮'}
+  <script>
+    // Service Worker Registration for PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('Service Worker Registered'))
+          .catch(err => console.log('Service Worker Error', err));
+      });
     }
-  }catch(e){console.error(e)}
-  defaults();save()
-}
-
-function mt(y,m){let s=new Date(y,m,1),e=new Date(y,m+1,1),a=tx.filter(x=>{let d=ld(x.date);return !isNaN(d)&&d>=s&&d<e}),income=0,expense=0;a.forEach(x=>x.type==='income'?income+=+x.amount:expense+=+x.amount);return{a,income,expense,net:income-expense}}
-function opening(y,m){let s=new Date(y,m,1),n=0;tx.forEach(x=>{let d=ld(x.date);if(!isNaN(d)&&d<s)n+=x.type==='income'?+x.amount:-+x.amount});return n}
-function closing(y,m){let t=mt(y,m);return opening(y,m)+t.net}
-
-async function cloud(){if(!user)return;try{save();await setDoc(doc(db,'users',user.uid),{version:10,transactions:tx,notes,categories:cats,archives,currency,updatedAt:serverTimestamp()},{merge:true})}catch(e){console.error(e);msg('Cloud sync failed')}}
-function apply(d){tx=d.transactions||[];notes=d.notes||[];cats=d.categories||[];archives=d.archives||{};currency=d.currency||'₮';defaults();clean();save()}
-async function listen(){if(unsub)unsub();if(!user)return;unsub=onSnapshot(doc(db,'users',user.uid),s=>{if(s.exists()){apply(s.data());render(false)}},console.error)}
-
-async function login(){
-  try{
-    let r=await signInWithPopup(auth,provider),s=await getDoc(doc(db,'users',r.user.uid));
-    if(s.exists())apply(s.data());
-    else{tx=[];notes=[];cats=[];archives={};currency='₮';defaults();save();await cloud()}
-    await listen();render();msg('Cloud account connected')
-  }catch(e){if(e.code!=='auth/popup-closed-by-user')msg('Login failed')}
-}
-async function logout(){if(unsub){unsub();unsub=null}await signOut(auth);user=null;load();render();msg('Logged out')}
-
-onAuthStateChanged(auth,async u=>{
-  user=u;
-  if(u){
-    try{
-      let s=await getDoc(doc(db,'users',u.uid));
-      if(s.exists())apply(s.data());
-      else{tx=[];notes=[];cats=[];archives={};currency='₮';defaults();save();await cloud()}
-      await listen()
-    }catch(e){console.error(e)}
-  }else load();
-  authUI();render()
-});
-
-function authUI(){
-  if(user){$('authStatus').textContent='Signed in: '+(user.email||'Google account');$('login').style.display='none';$('logout').style.display='block'}
-  else{$('authStatus').textContent='Not signed in · Local data';$('login').style.display='block';$('logout').style.display='none'}
-  $('currency').value=currency
-}
-
-function archive(force=false){
-  let now=new Date(),cur=now.getFullYear()*12+now.getMonth(),seen=new Set(Object.keys(archives));
-  new Set(tx.map(x=>{let d=ld(x.date);return isNaN(d)?null:d.getFullYear()*12+d.getMonth()}).filter(i=>i!==null&&i<cur)).forEach(i=>{
-    let y=Math.floor(i/12),m=i%12,k=y+'-'+String(m+1).padStart(2,'0');
-    if(!seen.has(k)){
-      let t=mt(y,m);
-      archives[k]={openingBalance:opening(y,m),income:t.income,expense:t.expense,net:t.net,closingBalance:closing(y,m),transactionCount:t.a.length,archivedAt:new Date().toISOString(),timestampType:'UTC'}
-    }
-  });
-  save();if(user)cloud();if(force){renderArchives();msg('Archive refreshed')}
-}
-
-function changeMonth(d){cm+=d;if(cm<0){cm=11;cy--}if(cm>11){cm=0;cy++}render(false)}
-function renderBalance(){
-  let o=opening(cy,cm),t=mt(cy,cm),c=o+t.net;
-  $('opening').textContent=money(o);$('income').textContent=money(t.income);$('expense').textContent=money(t.expense);
-  $('net').textContent=(t.net>=0?'+ ':'- ')+money(Math.abs(t.net));
-  $('balance').textContent=money(c);$('balance').className='balance '+(c>=0?'pos':'neg')
-}
-
-function row(x){return `<div class="tx"><div class="ico"><i class="fa-solid ${x.type==='income'?'fa-arrow-down':'fa-arrow-up'}"></i></div><div class="tm"><div class="tn">${esc(x.name||x.category)}</div><div class="meta">${esc(x.category||'Uncategorized')} · ${esc(x.date)}</div></div><div class="amt ${x.type==='income'?'inc':'exp'}">${x.type==='income'?'+':'−'}${esc(money(x.amount))}</div><button class="mini" onclick="editTx('${encodeURIComponent(x.id)}')">✎</button><button class="mini" onclick="delTx('${encodeURIComponent(x.id)}')">🗑</button></div>`}
-function openingRow(){let o=opening(cy,cm);return o?`<div class="tx"><div class="ico">📦</div><div class="tm"><div class="tn">Opening Balance</div><div class="meta">Carried forward from previous months</div></div><div class="amt ${o>=0?'inc':'exp'}">${o>=0?'+':'−'}${esc(money(Math.abs(o)))}</div></div>`:''}
-function renderTx(){
-  let a=mt(cy,cm).a.sort((a,b)=>ld(b.date)-ld(a.date));
-  $('transactions').innerHTML=openingRow()+a.map(row).join('')||'<div class="empty">No transactions this month.</div>';
-  $('recent').innerHTML=openingRow()+a.slice(0,5).map(row).join('')||'<div class="empty">No transactions this month.</div>'
-}
-
-function charts(){
-  let t=mt(cy,cm);
-  if(hc)hc.destroy();
-  hc=new Chart($('homeChart'),{type:'doughnut',data:{labels:['Income','Expense'],datasets:[{data:[t.income,t.expense]}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
-  if(rc)rc.destroy();
-  rc=new Chart($('reportChart'),{type:'bar',data:{labels:['Income','Expense','Net'],datasets:[{data:[t.income,t.expense,t.net]}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}})
-}
-
-function report(){
-  let m={};mt(cy,cm).a.forEach(x=>{let c=x.category||'Uncategorized';m[c]??={income:0,expense:0};m[c][x.type]+=+x.amount});
-  let a=Object.entries(m);
-  if(!a.length){$('catReport').innerHTML='<div class="empty">No category data this month.</div>';return}
-  let max=Math.max(...a.map(x=>x[1].income+x[1].expense),1);
-  $('catReport').innerHTML=a.sort((x,y)=>(y[1].income+y[1].expense)-(x[1].income+x[1].expense)).map(([c,v])=>`<div class="reportrow"><span>${esc(c)}</span><span>${v.income?`<b class="inc">+${esc(money(v.income))}</b>`:''} ${v.expense?`<b class="exp">−${esc(money(v.expense))}</b>`:''}<div class="progress"><i style="width:${(v.income+v.expense)/max*100}%"></i></div></span></div>`).join('')
-}
-
-function renderArchives(){
-  let a=Object.entries(archives).sort((x,y)=>y[0].localeCompare(x[0]));
-  $('archives').innerHTML=a.length?a.map(([k,v])=>{
-    let [y,m]=k.split('-').map(Number);
-    return `<div class="archive"><h3>${new Intl.DateTimeFormat('en-US',{month:'long'}).format(new Date(y,m-1,1))} ${y}<span style="float:right" class="${v.closingBalance>=0?'inc':'exp'}">${esc(money(v.closingBalance))}</span></h3><div class="astats"><div>Opening<b>${esc(money(v.openingBalance))}</b></div><div>Income<b>${esc(money(v.income))}</b></div><div>Expense<b>${esc(money(v.expense))}</b></div><div>Net<b>${esc(money(v.net))}</b></div><div>Transactions<b>${v.transactionCount}</b></div><div>Closing<b>${esc(money(v.closingBalance))}</b></div></div></div>`
-  }).join(''):'<div class="card empty">No archived months yet.</div>'
-}
-
-function renderNotes(){
-  $('notes').innerHTML=notes.length?notes.slice().reverse().map(n=>`<div class="note"><div class="notehead"><b>📝 Note</b><button class="mini" onclick="delNote('${encodeURIComponent(n.id)}')">🗑</button></div><div class="notetext">${esc(n.text)}</div><div class="meta">${esc(n.createdAt)}</div></div>`).join(''):'<div class="card empty">No notes yet.</div>'
-}
-
-function render(doArc=true){clean();defaults();if(doArc)archive();$('monthTitle').textContent=new Intl.DateTimeFormat('en-US',{month:'long',year:'numeric'}).format(new Date(cy,cm,1));renderBalance();renderTx();charts();report();renderArchives();renderNotes();authUI();save()}
-function nav(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));$(p+'Page').classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===p))}
-
-function openTx(t){editId=null;type=t;selected='';$('txTitle').textContent=t==='income'?'Add Income':'Add Expense';$('txType').value=t;$('txName').value='';$('txAmount').value='';$('txDate').value=today();$('txNote').value='';$('deleteTx').style.display='none';renderCats();openM('txModal')}
-function changeType(t){type=t;selected='';renderCats()}
-function renderCats(){
-  let b=$('cats');b.innerHTML='';
-  cats.filter(x=>x.type===type).forEach(c=>{
-    let q=document.createElement('button');q.className='tag'+(selected===c.name?' active':'');q.textContent=c.name;q.type='button';
-    q.onclick=()=>{selected=c.name;renderCats()};b.appendChild(q)
-  });
-  let q=document.createElement('button');q.className='tag add';q.textContent='+ Add more category';
-  q.onclick=()=>{closeM('txModal');$('catType').value=type;openM('catModal')};b.appendChild(q)
-}
-
-function saveTx(){
-  let t=$('txType').value,n=$('txName').value.trim(),a=Number($('txAmount').value),d=$('txDate').value||today(),no=$('txNote').value.trim();
-  if(!a||a<=0||!selected){msg('Amount এবং Category নির্বাচন করুন');return}
-  if(!n)n=selected;
-  const wasEditing=!!editId;
-  if(editId){
-    let i=tx.findIndex(x=>x.id===editId);
-    if(i>=0)tx[i]={...tx[i],type:t,name:n,amount:a,date:d,note:no,category:selected};
-    else{msg('Transaction not found');return}
-  }else tx.push({id:gid(),type:t,name:n,amount:a,date:d,note:no,category:selected,isCarryForward:false});
-  editId=null;save();closeM('txModal');render();if(user)cloud();msg(wasEditing?'Transaction updated':'Transaction saved')
-}
-
-function editTx(e){
-  let x=tx.find(y=>y.id===decodeURIComponent(e));if(!x)return;
-  editId=x.id;type=x.type;selected=x.category||'';
-  $('txTitle').textContent=x.type==='income'?'Edit Income':'Edit Expense';
-  $('txType').value=x.type;$('txName').value=x.name||'';$('txAmount').value=x.amount;$('txDate').value=x.date;$('txNote').value=x.note||'';
-  $('deleteTx').style.display='block';renderCats();openM('txModal')
-}
-
-function delTx(e){
-  let i=decodeURIComponent(e);if(!confirm('এই transaction টি delete করবেন?'))return;
-  tx=tx.filter(x=>x.id!==i);if(editId===i)editId=null;
-  save();render();if(user)cloud();msg('Transaction deleted')
-}
-
-function deleteEditing(){
-  if(!editId)return;if(!confirm('এই transaction টি delete করবেন?'))return;
-  const id=editId;tx=tx.filter(x=>x.id!==id);editId=null;
-  save();closeM('txModal');render();if(user)cloud();msg('Transaction deleted')
-}
-
-function addCat(){
-  let n=$('catName').value.trim(),t=$('catType').value;
-  if(!n){msg('Category name দিন');return}
-  if(cats.some(x=>x.type===t&&x.name.toLowerCase()===n.toLowerCase())){msg('Category already exists');return}
-  cats.push({name:n,type:t});save();closeM('catModal');openTx(t);selected=n;renderCats();if(user)cloud();msg('Category added')
-}
-
-function openNote(){$('noteInput').value='';openM('noteModal')}
-function saveNote(){let n=$('noteInput').value.trim();if(!n){msg('Note লিখুন');return}notes.push({id:gid(),text:n,createdAt:new Date().toLocaleString()});save();closeM('noteModal');renderNotes();if(user)cloud();msg('Note saved')}
-function delNote(e){let i=decodeURIComponent(e);if(!confirm('এই note টি delete করবেন?'))return;notes=notes.filter(x=>x.id!==i);save();renderNotes();if(user)cloud();msg('Note deleted')}
-function openSettings(){$('currency').value=currency;openM('settingsModal')}
-function setCurrency(v){currency=v;save();render(false);if(user)cloud();msg('Currency updated')}
-
-async function pdf(){
-  let t=mt(cy,cm),o=opening(cy,cm),c=o+t.net,w=document.createElement('div');
-  w.style='width:700px;background:white;padding:25px;font-family:Arial;color:#172033';
-  w.innerHTML=`<h1>My Finance</h1><h2>${esc($('monthTitle').textContent)}</h2><hr><p>Opening Balance: <b>${esc(money(o))}</b></p><p>Income: <b>${esc(money(t.income))}</b></p><p>Expense: <b>${esc(money(t.expense))}</b></p><h2>Closing Balance: ${esc(money(c))}</h2><h3>Transactions</h3><table style="width:100%;border-collapse:collapse"><tr><th align="left">Date</th><th align="left">Description</th><th align="left">Category</th><th align="right">Amount</th></tr>${t.a.sort((a,b)=>ld(a.date)-ld(b.date)).map(x=>`<tr><td>${esc(x.date)}</td><td>${esc(x.name)}</td><td>${esc(x.category)}</td><td align="right">${x.type==='income'?'+':'−'} ${esc(money(x.amount))}</td></tr>`).join('')}</table>`;
-  document.body.appendChild(w);
-  try{
-    await html2pdf().set({margin:8,filename:`My-Finance-${cy}-${String(cm+1).padStart(2,'0')}.pdf`,html2canvas:{scale:2},jsPDF:{unit:'mm',format:'a4'}}).from(w).save();
-    msg('PDF তৈরি হয়েছে')
-  }catch(e){console.error(e);msg('PDF তৈরি করা যায়নি')}
-  w.remove()
-}
-
-// Local App Lock (Device security)
-const LOCK_KEY='myFinanceAppLockHash';
-let lockMode='unlock';
-
-function lockHash(pin){
-  return crypto.subtle.digest('SHA-256',new TextEncoder().encode(pin)).then(b=>Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join(''))
-}
-function hasLock(){return !!localStorage.getItem(LOCK_KEY)}
-
-function showLock(mode){
-  lockMode=mode;
-  const s=$('lockScreen'),p=$('lockPin'),p2=$('lockPin2'),e=$('lockError'),b=$('lockMainBtn'),c=$('lockCancelBtn');
-  s.style.display='flex';p.value='';p2.value='';e.textContent='';
-  if(mode==='setup'){
-    $('lockTitle').textContent='Set App Lock';$('lockHint').textContent='Choose a 4–6 digit PIN for this device.';p2.style.display='block';b.textContent='Set PIN';c.style.display='none';
-  }else if(mode==='change'){
-    $('lockTitle').textContent='Change PIN';$('lockHint').textContent='Enter a new 4–6 digit PIN.';p2.style.display='block';b.textContent='Change PIN';c.style.display='block';
-  }else if(mode==='disable'){
-    $('lockTitle').textContent='Disable App Lock';$('lockHint').textContent='Enter your current PIN to turn off the lock.';p2.style.display='none';b.textContent='Disable Lock';c.style.display='block';
-  }else{
-    $('lockTitle').textContent='App Locked';$('lockHint').textContent='Enter your PIN to open My Finance.';p2.style.display='none';b.textContent='Unlock';c.style.display='none';
-  }
-  setTimeout(()=>p.focus(),100)
-}
-
-function lockCancel(){if(hasLock()){closeM('settingsModal')}$('lockScreen').style.display='none'}
-
-async function lockMain(){
-  const p=$('lockPin').value.trim(),p2=$('lockPin2').value.trim(),e=$('lockError');
-  if(!/^\d{4,6}$/.test(p)){e.textContent='PIN অবশ্যই ৪–৬ সংখ্যার হতে হবে';return}
-  if(lockMode==='setup'||lockMode==='change'){
-    if(p!==p2){e.textContent='দুইটি PIN মিলছে না';return}
-    if(lockMode==='change'){
-      const old=prompt('বর্তমান PIN দিন');
-      if(old===null)return;
-      if(!/^\d{4,6}$/.test(old)||await lockHash(old)!==localStorage.getItem(LOCK_KEY)){e.textContent='বর্তমান PIN সঠিক নয়';return}
-    }
-    localStorage.setItem(LOCK_KEY,await lockHash(p));
-    $('lockScreen').style.display='none';updateLockStatus();msg(lockMode==='setup'?'App Lock enabled':'PIN changed');return
-  }
-  if(lockMode==='disable'){
-    if(await lockHash(p)!==localStorage.getItem(LOCK_KEY)){e.textContent='PIN সঠিক নয়';return}
-    localStorage.removeItem(LOCK_KEY);$('lockScreen').style.display='none';updateLockStatus();msg('App Lock disabled');return
-  }
-  if(await lockHash(p)!==localStorage.getItem(LOCK_KEY)){e.textContent='ভুল PIN';return}
-  $('lockScreen').style.display='none';msg('Unlocked')
-}
-
-function manageLock(){if(hasLock())showLock('change');else showLock('setup')}
-function updateLockStatus(){
-  const s=$('lockStatus'),b=$('lockManageBtn'),d=$('lockDisableBtn');
-  if(!s||!b)return;
-  if(hasLock()){s.textContent='Enabled on this device';b.textContent='Change PIN';if(d)d.style.display='block'}
-  else{s.textContent='Not enabled';b.textContent='Set App Lock';if(d)d.style.display='none'}
-}
-function disableLock(){showLock('disable')}
-
-window.addEventListener('load',()=>{updateLockStatus();if(hasLock())showLock('unlock')});
-Object.assign(window,{changeMonth,nav,openTx,changeType,saveTx,editTx,delTx,deleteEditing,addCat,openNote,saveNote,delNote,openSettings,setCurrency,login,logout,pdf,archive,closeM,manageLock,lockMain,lockCancel,disableLock});
-load();render();
-</script>
-<script>
-if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(e=>console.warn('Service Worker:',e)));
-}
-</script>
+  </script>
 </body>
 </html>
