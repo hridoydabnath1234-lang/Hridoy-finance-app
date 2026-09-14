@@ -1,1 +1,424 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#673de6">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>My Finance v12.0</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;width:100%;min-height:100%;background:#eef0f7;font-family:Arial,sans-serif;color:#202536;overflow-x:hidden}
+body{min-height:100dvh}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer;border:0}
+.app{width:100%;max-width:570px;min-height:100dvh;margin:auto;background:#f5f6fa;position:relative;padding-bottom:78px}
+.top{background:linear-gradient(135deg,#5d35df,#8337ee);color:white;padding:18px 22px 14px;border-radius:0 0 20px 20px}
+.brand{display:flex;align-items:center;gap:13px}
+.logo{width:58px;height:58px;border-radius:18px;background:#ffffff20;display:grid;place-items:center;font-size:28px}
+.brand h1{font-size:23px;margin:0 0 5px}
+.brand small{opacity:.78}
+.gear{margin-left:auto;width:54px;height:54px;border-radius:17px;background:#ffffff20;color:#fff;font-size:24px}
+.monthbar{display:flex;align-items:center;justify-content:space-between;margin-top:18px}
+.monthbar button{width:52px;height:48px;border-radius:15px;background:#ffffff20;color:#fff;font-size:31px}
+.month{font-weight:700;font-size:19px}
+main{padding:18px 18px 0}
+.card{background:#fff;border:1px solid #e2e4eb;border-radius:24px;box-shadow:0 5px 18px #30384d0c}
+.balance{padding:22px 20px;margin-bottom:16px}
+.label{font-size:13px;color:#737a89}
+.closing{font-size:34px;font-weight:800;margin:5px 0 18px;color:#149447}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.stat{background:#f5f6fa;border-radius:18px;padding:13px 14px}
+.stat strong{display:block;font-size:18px;margin-top:5px}
+.net{color:#1c2637}.income{color:#188d49}.expense{color:#bd3038}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.action{height:62px;background:#fff;border:1px solid #dddfe7;border-radius:19px;font-weight:700;font-size:18px;box-shadow:0 3px 10px #30384d08}
+.action.in{color:#21864d}.action.out{color:#b73439}
+.section-title{display:flex;justify-content:space-between;align-items:center;margin:18px 2px 11px;font-size:17px;font-weight:700}
+.link{color:#5a43cf;font-weight:700;background:none}
+.listbox{min-height:112px;padding:12px}
+.empty{text-align:center;color:#8a8f9c;padding:38px 8px}
+.txrow,.loanrow{display:flex;align-items:center;gap:11px;padding:12px 5px;border-bottom:1px solid #eee}
+.txrow:last-child,.loanrow:last-child{border-bottom:0}
+.txicon{width:42px;height:42px;border-radius:14px;background:#f0effc;display:grid;place-items:center;font-size:19px}
+.txmain{flex:1;min-width:0}.txmain b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.txmain small{color:#858b98}
+.amount{font-weight:800}.plus{color:#15934c}.minus{color:#bd3038}
+.chartbox{height:260px!important;min-height:260px!important;max-height:260px!important;padding:15px;position:relative;overflow:hidden}
+canvas{width:100%!important;height:100%!important;display:block}
+.bottom{position:fixed;z-index:20;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:570px;height:72px;background:#fff;border-top:1px solid #e2e3e9;display:grid;grid-template-columns:repeat(5,1fr);padding-bottom:env(safe-area-inset-bottom)}
+.nav{background:none;color:#9aa0ad;font-size:12px;padding-top:9px}.nav span{display:block;font-size:22px;margin-bottom:3px}.nav.active{color:#5a43d5;font-weight:700}
+.fab{position:fixed;z-index:30;bottom:91px;left:50%;transform:translateX(-50%);width:75px;height:75px;border-radius:23px;background:linear-gradient(135deg,#5b35df,#7936ee);color:#fff;font-size:36px;box-shadow:0 10px 25px #5e3ee955}
+.page{display:none}.page.active{display:block}
+.subcard{padding:18px;margin-bottom:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bigstat{text-align:center;padding:15px;background:#f5f6fa;border-radius:18px}.bigstat b{font-size:23px;display:block;margin-top:5px}
+.btn{padding:12px 15px;border-radius:13px;background:#5d3ee0;color:#fff;font-weight:700}
+.btn.secondary{background:#eef0f7;color:#303747}.btn.danger{background:#c73840}
+.rowbtns{display:flex;gap:7px;margin-top:8px}.rowbtns button{padding:7px 10px;border-radius:9px;background:#eeeef7}
+.modalwrap{position:fixed;inset:0;z-index:100;background:#0008;display:none;align-items:flex-end;justify-content:center}
+.modalwrap.show{display:flex}
+.modal{width:100%;max-width:570px;max-height:92dvh;overflow:auto;background:#fff;border-radius:25px 25px 0 0;padding:22px}
+.modal h2{margin:0 0 18px}.field{margin:12px 0}.field label{display:block;font-size:13px;color:#707786;margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;padding:13px;border:1px solid #d9dce5;border-radius:13px;outline:none;background:#fff}.field textarea{min-height:100px;resize:vertical}
+.modal-actions{display:flex;gap:9px;margin-top:18px}.modal-actions button{flex:1}
+.tabs{display:flex;gap:8px;margin-bottom:13px}.tab{flex:1;padding:11px;border-radius:12px;background:#e9eaf2;font-weight:700}.tab.active{background:#603fe0;color:#fff}
+.note{padding:15px;background:#fff;border:1px solid #e1e3e9;border-radius:17px;margin-bottom:10px}
+.note b{display:block;margin-bottom:6px}.note small{color:#777}
+.setting{padding:16px;background:#fff;border:1px solid #e1e3e9;border-radius:17px;margin-bottom:11px}
+.setting h3{margin:0 0 7px}.setting p{margin:0;color:#737989;font-size:13px;line-height:1.5}
+.switchrow{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
+.badge{display:inline-block;padding:5px 9px;border-radius:10px;background:#ece9ff;color:#5a3bd0;font-size:12px;font-weight:700}
+.lock{position:fixed;inset:0;background:#f5f6fa;z-index:200;display:none;place-items:center;padding:25px}.lock.show{display:grid}.lockbox{width:100%;max-width:400px;text-align:center}.lockicon{font-size:55px}.pin{font-size:28px;text-align:center;letter-spacing:8px}
+.toast{position:fixed;z-index:300;left:50%;bottom:86px;transform:translateX(-50%);background:#252a36;color:#fff;padding:11px 16px;border-radius:13px;display:none;max-width:90%;text-align:center}.toast.show{display:block}
+.reportprint{display:none}
+@media(min-width:600px){body{padding:12px 0}.app{border-radius:20px;box-shadow:0 8px 35px #1e243315;overflow:hidden}.top{border-radius:0}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+  <div class="brand">
+    <div class="logo">▣</div>
+    <div><h1>My Finance</h1><small>Personal Finance Manager · v12.0</small></div>
+    <button class="gear" onclick="openSettings()">⚙</button>
+  </div>
+  <div class="monthbar">
+    <button onclick="changeMonth(-1)">‹</button><div class="month" id="monthTitle"></div><button onclick="changeMonth(1)">›</button>
+  </div>
+</header>
 
+<main>
+<section id="home" class="page active">
+  <div id="dueAlert"></div>
+  <div class="card balance">
+    <div class="label">Closing Balance</div><div class="closing" id="closing"></div>
+    <div class="stats">
+      <div class="stat"><span class="label">Opening Balance</span><strong id="opening"></strong></div>
+      <div class="stat"><span class="label">This Month Net</span><strong id="net" class="net"></strong></div>
+      <div class="stat"><span class="label">Income</span><strong id="income" class="income"></strong></div>
+      <div class="stat"><span class="label">Expense</span><strong id="expense" class="expense"></strong></div>
+    </div>
+  </div>
+  <div class="actions"><button class="action in" onclick="openTx('income')">↓ Income</button><button class="action out" onclick="openTx('expense')">↑ Expense</button></div>
+  <div class="section-title">Recent Transactions <button class="link" onclick="showPage('txns')">View all</button></div>
+  <div class="card listbox" id="recent"></div>
+  <div class="section-title">Quick Report <button class="link" onclick="showPage('reports')">Reports</button></div>
+  <div class="card chartbox"><canvas id="chart"></canvas></div>
+  <div class="section-title">Notebook <button class="link" onclick="showPage('notes')">Open Notebook</button></div>
+  <div class="card listbox" id="homeNotes"></div>
+</section>
+
+<section id="txns" class="page">
+  <div class="section-title">Transactions <button class="btn" onclick="openTx('income')">+ Add</button></div>
+  <div class="tabs"><button class="tab active" id="tabAll" onclick="filterTx('all')">All</button><button class="tab" id="tabIn" onclick="filterTx('income')">Income</button><button class="tab" id="tabOut" onclick="filterTx('expense')">Expense</button></div>
+  <div class="card listbox" id="txList"></div>
+</section>
+
+<section id="loans" class="page">
+  <div class="section-title">পাওনা / দেনা <button class="btn" onclick="openLoan()">+ Add</button></div>
+  <div class="grid2">
+    <div class="bigstat"><span class="label">পাওনা</span><b class="income" id="loanReceivable"></b></div>
+    <div class="bigstat"><span class="label">দেনা</span><b class="expense" id="loanPayable"></b></div>
+  </div>
+  <div style="height:12px"></div><div class="card listbox" id="loanList"></div>
+</section>
+
+<section id="reports" class="page">
+  <div class="section-title">Reports <button class="btn" onclick="printReport()">PDF / Print</button></div>
+  <div class="card subcard"><div class="label">Current Month</div><h2 id="reportMonth"></h2><div id="reportSummary"></div></div>
+  <div class="section-title">Category Report</div><div class="card listbox" id="catReport"></div>
+  <div class="section-title">Daily Report</div><div class="card chartbox"><canvas id="dailyChart"></canvas></div>
+</section>
+
+<section id="archive" class="page">
+  <div class="section-title">Archive</div>
+  <div id="archiveList"></div>
+</section>
+
+<section id="notes" class="page">
+  <div class="section-title">Notebook <button class="btn" onclick="openNote()">+ Note</button></div>
+  <div id="noteList"></div>
+</section>
+</main>
+
+<button class="fab" onclick="openQuick()">+</button>
+<nav class="bottom">
+  <button class="nav active" data-page="home" onclick="showPage('home')"><span>⌂</span>Home</button>
+  <button class="nav" data-page="txns" onclick="showPage('txns')"><span>☷</span>Transactions</button>
+  <button class="nav" data-page="loans" onclick="showPage('loans')"><span>৳</span>পাওনা/দেনা</button>
+  <button class="nav" data-page="reports" onclick="showPage('reports')"><span>▥</span>Reports</button>
+  <button class="nav" data-page="notes" onclick="showPage('notes')"><span>▤</span>Notebook</button>
+</nav>
+</div>
+
+<div class="modalwrap" id="txModal"><div class="modal">
+<h2 id="txTitle">Add Income</h2>
+<div class="field"><label>Amount</label><input id="txAmount" type="number" step="0.01" inputmode="decimal"></div>
+<div class="field"><label>Category</label><select id="txCat"></select></div>
+<div class="field"><label>Date</label><input id="txDate" type="date"></div>
+<div class="field"><label>Note</label><input id="txNote" maxlength="120"></div>
+<div class="modal-actions"><button class="btn secondary" onclick="closeModal('txModal')">Cancel</button><button class="btn" onclick="saveTx()">Save</button></div>
+</div></div>
+
+<div class="modalwrap" id="loanModal"><div class="modal">
+<h2 id="loanTitle">Add পাওনা/দেনা</h2>
+<div class="field"><label>Type</label><select id="loanType"><option value="receivable">পাওনা</option><option value="payable">দেনা</option></select></div>
+<div class="field"><label>Person / Description</label><input id="loanName"></div>
+<div class="field"><label>Amount</label><input id="loanAmount" type="number" step="0.01"></div>
+<div class="field"><label>Due Date</label><input id="loanDue" type="date"></div>
+<div class="field"><label>Note</label><input id="loanNote"></div>
+<div class="modal-actions"><button class="btn secondary" onclick="closeModal('loanModal')">Cancel</button><button class="btn" onclick="saveLoan()">Save</button></div>
+</div></div>
+
+<div class="modalwrap" id="noteModal"><div class="modal">
+<h2>Notebook</h2><div class="field"><label>Title</label><input id="noteTitle"></div><div class="field"><label>Note</label><textarea id="noteText"></textarea></div>
+<div class="modal-actions"><button class="btn secondary" onclick="closeModal('noteModal')">Cancel</button><button class="btn" onclick="saveNote()">Save</button></div>
+</div></div>
+
+<div class="modalwrap" id="catModal"><div class="modal">
+<h2>Add Category</h2><div class="field"><label>Type</label><select id="catType"><option value="income">Income</option><option value="expense">Expense</option></select></div><div class="field"><label>Category name</label><input id="catName"></div>
+<div class="modal-actions"><button class="btn secondary" onclick="closeModal('catModal')">Cancel</button><button class="btn" onclick="addCategory()">Add</button></div>
+</div></div>
+
+<div class="modalwrap" id="quickModal"><div class="modal">
+<h2>নতুন হিসাব যোগ করুন</h2>
+<p style="color:#737989;margin-top:-8px">আপনি কোন ধরনের হিসাব যোগ করতে চান?</p>
+<div class="actions" style="margin-top:18px">
+  <button class="action in" onclick="closeModal('quickModal');openTx('income')">↓ Income</button>
+  <button class="action out" onclick="closeModal('quickModal');openTx('expense')">↑ Expense</button>
+</div>
+<div class="modal-actions"><button class="btn secondary" onclick="closeModal('quickModal')">Cancel</button></div>
+</div></div>
+
+<div class="modalwrap" id="settingsModal"><div class="modal">
+<h2>Settings</h2>
+<div class="setting"><h3>Currency</h3><p>লোকালভাবে সংরক্ষিত হবে।</p><div class="field"><select id="currency" onchange="setCurrency(this.value)"><option value="৳">৳ Taka</option><option value="₮">₮ Taka</option><option value="$">$ Dollar</option><option value="€">€ Euro</option><option value="£">£ Pound</option><option value="₹">₹ Rupee</option></select></div></div>
+<div class="setting"><h3>🔒 App Lock</h3><p id="lockStatus">Not enabled</p><div class="modal-actions"><button class="btn secondary" onclick="changePin()">Set / Change PIN</button><button class="btn danger" onclick="removePin()">Remove</button></div></div>
+<div class="setting"><h3>💾 Local Data</h3><p><span class="badge">OFFLINE ONLY</span> সব হিসাব এই ফোনের IndexedDB-তে থাকবে। কোনো Firebase বা Google Sign-in নেই।</p><div class="modal-actions"><button class="btn" onclick="backupNow()">Backup Now</button><button class="btn secondary" onclick="restorePicker.click()">Restore</button></div><div class="modal-actions"><button class="btn secondary" onclick="recoverPrevious()">Recover Previous Local Backup</button></div><input id="restorePicker" type="file" accept=".json,application/json" style="display:none" onchange="restoreFile(this.files[0])"></div>
+<div class="setting"><h3>Storage Status</h3><p id="storageStatus">Checking…</p></div>
+<div class="modal-actions"><button class="btn secondary" onclick="closeModal('settingsModal')">Close</button></div>
+</div></div>
+
+<div class="lock" id="lockScreen"><div class="lockbox"><div class="lockicon">🔒</div><h2>My Finance Locked</h2><p>আপনার PIN দিন</p><input id="unlockPin" class="pin" type="password" inputmode="numeric" maxlength="6"><div style="height:12px"></div><button class="btn" onclick="unlock()">Unlock</button><p id="lockMsg" style="color:#c33"></p></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* My Finance v12.0
+   Offline-first: IndexedDB primary + localStorage fallback/mirror.
+   No Firebase, no Google, no cloud sync.
+*/
+const DB_NAME='MyFinanceOfflineDB',DB_VER=1,STORE='state',BACKUPS='backups',LS_KEY='myFinanceData_v12';
+let db=null,state=null,saveQueue=Promise.resolve(),cm=new Date().getMonth(),cy=new Date().getFullYear(),filter='all',editId=null,editLoanId=null,editNoteId=null,txType='income';
+const I=['🌙 Moon Salary','💼 Mainamoti Salary','➕ Mainamoti Extra','🔄 Mainamoti Cross-Matching','🌃 Moon Night'];
+const E=['🛒 Grocery','💸 Expense','⚡ Electricity Bill','🔥 Gas Bill','📱 Mobile Data','❤️ Donation','💊 Medicine'];
+
+const $=id=>document.getElementById(id);
+function gid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,9)}
+function today(){let d=new Date();return d.toISOString().slice(0,10)}
+function money(n){return (state?.currency||'৳')+' '+(Number(n)||0).toFixed(2)}
+function esc(s){let d=document.createElement('div');d.textContent=String(s??'');return d.innerHTML}
+function monthKey(y=cy,m=cm){return y+'-'+String(m+1).padStart(2,'0')}
+function monthName(y,m){return new Date(y,m,1).toLocaleDateString('en-US',{month:'long',year:'numeric'})}
+function validState(s){
+  return s&&typeof s==='object'&&Array.isArray(s.transactions)&&Array.isArray(s.notes)&&Array.isArray(s.categories)&&Array.isArray(s.loans)&&typeof s.archives==='object';
+}
+function normalize(s){
+  s=s||{};
+  s.transactions=Array.isArray(s.transactions)?s.transactions:[];
+  s.notes=Array.isArray(s.notes)?s.notes:[];
+  s.categories=Array.isArray(s.categories)?s.categories:[];
+  s.loans=Array.isArray(s.loans)?s.loans:[];
+  s.archives=s.archives&&typeof s.archives==='object'&&!Array.isArray(s.archives)?s.archives:{};
+  s.currency=s.currency||'৳';s.version=12;s.savedAt=Number(s.savedAt)||Date.now();
+  let names=new Set(s.categories.map(x=>x.name));
+  I.forEach(x=>{if(!names.has(x))s.categories.push({name:x,type:'income'})});
+  E.forEach(x=>{if(!names.has(x))s.categories.push({name:x,type:'expense'})});
+  s.transactions=s.transactions.filter(x=>x&&(x.type==='income'||x.type==='expense')&&!x.isCarryForward);
+  return s;
+}
+function openDB(){
+ return new Promise((resolve,reject)=>{
+  let r=indexedDB.open(DB_NAME,DB_VER);
+  r.onupgradeneeded=e=>{let d=e.target.result;if(!d.objectStoreNames.contains(STORE))d.createObjectStore(STORE,{keyPath:'id'});if(!d.objectStoreNames.contains(BACKUPS)){let b=d.createObjectStore(BACKUPS,{keyPath:'id',autoIncrement:true});b.createIndex('savedAt','savedAt')}};
+  r.onsuccess=e=>{db=e.target.result;resolve(db)};r.onerror=()=>reject(r.error)
+ })
+}
+function idbGet(id='current'){
+ return new Promise((resolve,reject)=>{let r=db.transaction(STORE,'readonly').objectStore(STORE).get(id);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})
+}
+function idbPut(s){
+ return new Promise((resolve,reject)=>{let r=db.transaction(STORE,'readwrite').objectStore(STORE).put({id:'current',...s});r.onsuccess=resolve;r.onerror=()=>reject(r.error)})
+}
+function idbBackup(s){
+ return new Promise((resolve,reject)=>{let r=db.transaction(BACKUPS,'readwrite').objectStore(BACKUPS).add({...s,savedAt:s.savedAt});r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})
+}
+async function trimBackups(){
+ let all=await new Promise((resolve,reject)=>{let a=[];let r=db.transaction(BACKUPS,'readonly').objectStore(BACKUPS).openCursor(null,'prev');r.onsuccess=()=>{let c=r.result;if(c){a.push(c.value);if(a.length<25)c.continue();else resolve(a)}else resolve(a)};r.onerror=()=>reject(r.error)});
+ if(all.length>20){let ids=all.slice(20).map(x=>x.id);let t=db.transaction(BACKUPS,'readwrite').objectStore(BACKUPS);ids.forEach(id=>t.delete(id))}
+}
+function lsWrite(s){try{localStorage.setItem(LS_KEY,JSON.stringify(s))}catch(e){}}
+function lsRead(){
+ try{let x=localStorage.getItem(LS_KEY);if(x)return normalize(JSON.parse(x));
+ let old=localStorage.getItem('myFinanceData_v11')||localStorage.getItem('myFinanceData_v10');if(old){let d=JSON.parse(old);return normalize({...d,savedAt:Date.now()})}
+ }catch(e){}return null
+}
+function save(){
+ if(!state)return Promise.resolve();
+ state=normalize({...state,savedAt:Date.now()});
+ let snap=JSON.parse(JSON.stringify(state));
+ saveQueue=saveQueue.then(async()=>{
+   lsWrite(snap);
+   try{await idbPut(snap);await idbBackup(snap);await trimBackups()}catch(e){console.warn('IndexedDB save',e)}
+ });
+ return saveQueue
+}
+async function loadState(){
+ let a=lsRead(),b=null;
+ try{b=normalize(await idbGet('current'))}catch(e){}
+ if(validState(a)&&validState(b))state=(b.savedAt>=a.savedAt?b:a);
+ else state=validState(b)?b:validState(a)?a:normalize({version:12,savedAt:Date.now(),transactions:[],notes:[],categories:[],archives:{},loans:[],currency:'৳'});
+ await save();
+ try{if(navigator.storage?.persist){let p=await navigator.storage.persist();console.log('Persistent storage:',p)}}catch(e){}
+}
+function monthTx(){let k=monthKey();return state.transactions.filter(x=>x.date&&x.date.slice(0,7)===k)}
+function sum(type,arr=monthTx()){return arr.filter(x=>x.type===type).reduce((a,x)=>a+Number(x.amount||0),0)}
+function openingBalance(){
+ let before=state.transactions.filter(x=>x.date&&x.date.slice(0,7)<monthKey()).reduce((a,x)=>a+(x.type==='income'?Number(x.amount):-Number(x.amount)),0);
+ return before
+}
+function changeMonth(n){cm+=n;if(cm<0){cm=11;cy--}if(cm>11){cm=0;cy++}render()}
+function showPage(id){
+ document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');
+ document.querySelectorAll('.nav').forEach(x=>x.classList.toggle('active',x.dataset.page===id));
+ render()
+}
+function render(){
+ if(!state)return;
+ $('monthTitle').textContent=monthName(cy,cm);
+ let a=monthTx(),inc=sum('income',a),out=sum('expense',a),net=inc-out,open=openingBalance(),close=open+net;
+ $('closing').textContent=money(close);$('opening').textContent=money(open);$('net').textContent=(net>=0?'+ ':'− ')+money(Math.abs(net));$('income').textContent=money(inc);$('expense').textContent=money(out);
+ $('recent').innerHTML=a.slice().sort((x,y)=>(y.date+y.id).localeCompare(x.date+x.id)).slice(0,5).map(txHTML).join('')||'<div class="empty">No transactions this month.</div>';
+ renderTx();renderLoans();renderNotes();renderReports();renderArchive();drawChart($('chart'),a);drawDaily($('dailyChart'),a);updateLockStatus();storageStatus()
+}
+function txHTML(x){
+ return `<div class="txrow"><div class="txicon">${x.type==='income'?'↓':'↑'}</div><div class="txmain"><b>${esc(x.category||'Uncategorized')}</b><small>${esc(x.date||'')} ${x.note?'· '+esc(x.note):''}</small></div><div class="amount ${x.type==='income'?'plus':'minus'}">${x.type==='income'?'+':'−'}${money(x.amount)}</div><div class="rowbtns"><button onclick="editTx('${x.id}')">✎</button><button onclick="deleteTx('${x.id}')">×</button></div></div>`
+}
+function renderTx(){
+ let a=monthTx().filter(x=>filter==='all'||x.type===filter).sort((x,y)=>y.date.localeCompare(x.date));
+ $('txList').innerHTML=a.map(txHTML).join('')||'<div class="empty">No transactions.</div>';
+ ['tabAll','tabIn','tabOut'].forEach(id=>$(id).classList.remove('active'));$('tab'+(filter==='all'?'All':filter==='income'?'In':'Out')).classList.add('active')
+}
+function filterTx(f){filter=f;renderTx()}
+function openTx(t='income',id=null){
+ txType=t;editId=id;$('txTitle').textContent=id?'Edit Transaction':(t==='income'?'Add Income':'Add Expense');
+ $('txAmount').value='';$('txNote').value='';$('txDate').value=today();fillCats();
+ if(id){let x=state.transactions.find(z=>z.id===id);if(x){$('txAmount').value=x.amount;$('txDate').value=x.date;$('txNote').value=x.note||'';txType=x.type;$('txCat').value=x.category}}
+ $('txModal').classList.add('show')
+}
+function fillCats(){let c=state.categories.filter(x=>x.type===txType);$('txCat').innerHTML=c.map(x=>`<option value="${esc(x.name)}">${esc(x.name)}</option>`).join('')+`<option value="__add">＋ Add more category</option>`}
+$('txCat').addEventListener('change',function(){if(this.value==='__add'){openCat(txType);setTimeout(fillCats,100)}})
+async function saveTx(){
+ let amount=Number($('txAmount').value);if(!amount||amount<0)return toast('সঠিক amount দিন');
+ let x={id:editId||gid(),type:txType,amount,date:$('txDate').value||today(),category:$('txCat').value,note:$('txNote').value.trim()};
+ if(editId){let i=state.transactions.findIndex(z=>z.id===editId);if(i>=0)state.transactions[i]=x}else state.transactions.push(x);
+ closeModal('txModal');await save();render();toast('Saved')
+}
+async function deleteTx(id){if(!confirm('এই হিসাবটি মুছে ফেলবেন?'))return;state.transactions=state.transactions.filter(x=>x.id!==id);await save();render();toast('Deleted')}
+function editTx(id){let x=state.transactions.find(z=>z.id===id);if(x)openTx(x.type,id)}
+function openCat(type){$('catType').value=type;$('catName').value='';$('catModal').classList.add('show')}
+async function addCategory(){let n=$('catName').value.trim(),t=$('catType').value;if(!n)return;state.categories.push({name:n,type:t});closeModal('catModal');await save();fillCats();$('txCat').value=n;toast('Category added')}
+function openLoan(id=null){
+ editLoanId=id;$('loanTitle').textContent=id?'Edit পাওনা/দেনা':'Add পাওনা/দেনা';
+ $('loanType').value='receivable';$('loanName').value='';$('loanAmount').value='';$('loanDue').value='';$('loanNote').value='';
+ if(id){let x=state.loans.find(z=>z.id===id);if(x){$('loanType').value=x.type;$('loanName').value=x.name;$('loanAmount').value=x.amount;$('loanDue').value=x.due||'';$('loanNote').value=x.note||''}}
+ $('loanModal').classList.add('show')
+}
+async function saveLoan(){
+ let amount=Number($('loanAmount').value),name=$('loanName').value.trim();if(!amount||!name)return toast('নাম ও amount দিন');
+ let x={id:editLoanId||gid(),type:$('loanType').value,name,amount,due:$('loanDue').value,note:$('loanNote').value};
+ if(editLoanId){let i=state.loans.findIndex(z=>z.id===editLoanId);if(i>=0)state.loans[i]=x}else state.loans.push(x);
+ closeModal('loanModal');await save();render();toast('Saved')
+}
+async function settleLoan(id){
+ let x=state.loans.find(z=>z.id===id);if(!x)return;if(!confirm('Settlement archive করবেন?'))return;
+ let k=today().slice(0,7);state.archives[k]=state.archives[k]||{transactions:[],loans:[]};state.archives[k].loans.push({...x,settledAt:today()});state.loans=state.loans.filter(z=>z.id!==id);await save();render();toast('Settled & archived')
+}
+async function deleteLoan(id){if(!confirm('মুছে ফেলবেন?'))return;state.loans=state.loans.filter(x=>x.id!==id);await save();render()}
+function renderLoans(){
+ let r=state.loans.filter(x=>x.type==='receivable').reduce((a,x)=>a+Number(x.amount),0),p=state.loans.filter(x=>x.type==='payable').reduce((a,x)=>a+Number(x.amount),0);
+ $('loanReceivable').textContent=money(r);$('loanPayable').textContent=money(p);
+ $('loanList').innerHTML=state.loans.map(x=>`<div class="loanrow"><div class="txicon">${x.type==='receivable'?'↗':'↙'}</div><div class="txmain"><b>${esc(x.name)}</b><small>${x.due?'Due: '+esc(x.due):''} ${x.note?'· '+esc(x.note):''}</small></div><div class="amount ${x.type==='receivable'?'plus':'minus'}">${money(x.amount)}</div><div class="rowbtns"><button onclick="settleLoan('${x.id}')">✓</button><button onclick="openLoan('${x.id}')">✎</button><button onclick="deleteLoan('${x.id}')">×</button></div></div>`).join('')||'<div class="empty">কোনো পাওনা/দেনা নেই।</div>'
+}
+function openNote(id=null){
+ editNoteId=id;$('noteTitle').value='';$('noteText').value='';
+ if(id){let x=state.notes.find(z=>z.id===id);if(x){$('noteTitle').value=x.title;$('noteText').value=x.text}}
+ $('noteModal').classList.add('show')
+}
+async function saveNote(){
+ let title=$('noteTitle').value.trim(),text=$('noteText').value.trim();if(!title&&!text)return;
+ let x={id:editNoteId||gid(),title,text,updatedAt:Date.now()};
+ if(editNoteId){let i=state.notes.findIndex(z=>z.id===editNoteId);if(i>=0)state.notes[i]=x}else state.notes.unshift(x);
+ closeModal('noteModal');await save();render();toast('Note saved')
+}
+async function deleteNote(id){if(!confirm('Note মুছে ফেলবেন?'))return;state.notes=state.notes.filter(x=>x.id!==id);await save();render()}
+function renderNotes(){
+ $('noteList').innerHTML=state.notes.map(x=>`<div class="note"><b>${esc(x.title||'Untitled')}</b><div>${esc(x.text||'')}</div><small>${new Date(x.updatedAt||Date.now()).toLocaleString()}</small><div class="rowbtns"><button onclick="openNote('${x.id}')">✎ Edit</button><button onclick="deleteNote('${x.id}')">Delete</button></div></div>`).join('')||'<div class="card empty">Notebook empty.</div>';
+ if($('homeNotes')) $('homeNotes').innerHTML=state.notes.slice(0,3).map(x=>`<div class="txrow"><div class="txicon">▤</div><div class="txmain"><b>${esc(x.title||'Untitled')}</b><small>${esc((x.text||'').slice(0,60))}</small></div></div>`).join('')||'<div class="empty">Notebook empty. <button class="link" onclick="openNote()">Add a note</button></div>';
+}
+function renderNotesOLD(){$('noteList').innerHTML=state.notes.map(x=>`<div class="note"><b>${esc(x.title||'Untitled')}</b><div>${esc(x.text||'')}</div><small>${new Date(x.updatedAt||Date.now()).toLocaleString()}</small><div class="rowbtns"><button onclick="openNote('${x.id}')">✎ Edit</button><button onclick="deleteNote('${x.id}')">Delete</button></div></div>`).join('')||'<div class="card empty">Notebook empty.</div>'}
+function renderReports(){
+ let a=monthTx(),inc=sum('income',a),out=sum('expense',a);$('reportMonth').textContent=monthName(cy,cm);
+ $('reportSummary').innerHTML=`<div class="grid2"><div class="bigstat"><span class="label">Income</span><b class="income">${money(inc)}</b></div><div class="bigstat"><span class="label">Expense</span><b class="expense">${money(out)}</b></div></div>`;
+ let map={};a.forEach(x=>{map[x.category]=(map[x.category]||0)+Number(x.amount)*(x.type==='expense'?-1:1)});
+ $('catReport').innerHTML=Object.entries(map).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1])).map(([k,v])=>`<div class="txrow"><div class="txmain"><b>${esc(k)}</b></div><div class="amount ${v>=0?'plus':'minus'}">${v>=0?'+':'−'}${money(Math.abs(v))}</div></div>`).join('')||'<div class="empty">No report data.</div>'
+}
+function renderArchive(){
+ let keys=Object.keys(state.archives).sort().reverse();
+ $('archiveList').innerHTML=keys.map(k=>{let x=state.archives[k]||{},n=(x.transactions||[]).length+(x.loans||[]).length;return `<div class="card subcard"><b>${esc(k)}</b><p>${n} archived item(s)</p><details><summary>View</summary><pre style="white-space:pre-wrap">${esc(JSON.stringify(x,null,2))}</pre></details></div>`}).join('')||'<div class="card empty">No archived records.</div>'
+}
+function drawChart(c,a){
+ if(!c)return;let ctx=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight,dpr=devicePixelRatio||1;c.width=w*dpr;c.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
+ let inc=sum('income',a),out=sum('expense',a),max=Math.max(inc,out,1),base=h-45,bar=55,gap=65;
+ ctx.font='13px Arial';ctx.textAlign='center';[['Income',inc,'#2d9ddd'],['Expense',out,'#e55a83']].forEach((q,i)=>{let x=w/2-gap/2+(i?gap:0),bh=(q[1]/max)*(h-85);ctx.fillStyle=q[2];ctx.fillRect(x-bar/2,base-bh,bar,bh);ctx.fillStyle='#626978';ctx.fillText(q[0],x,base+22);ctx.fillText(money(q[1]),x,base-bh-8)});ctx.strokeStyle='#ddd';ctx.beginPath();ctx.moveTo(20,base+.5);ctx.lineTo(w-20,base+.5);ctx.stroke()
+}
+function drawDaily(c,a){
+ if(!c)return;let ctx=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight,dpr=devicePixelRatio||1;c.width=w*dpr;c.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
+ let days=Array.from({length:new Date(cy,cm+1,0).getDate()},(_,i)=>i+1),vals=days.map(d=>a.filter(x=>Number(x.date.slice(8))===d).reduce((s,x)=>s+(x.type==='income'?1:-1)*Number(x.amount),0)),max=Math.max(...vals.map(Math.abs),1);
+ ctx.strokeStyle='#bbb';ctx.beginPath();ctx.moveTo(20,h/2);ctx.lineTo(w-15,h/2);ctx.stroke();ctx.beginPath();ctx.strokeStyle='#6840df';
+ vals.forEach((v,i)=>{let x=20+i*(w-35)/Math.max(vals.length-1,1),y=h/2-(v/max)*(h/2-20);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke()
+}
+function openQuick(){$('quickModal').classList.add('show')}
+function openSettings(){ $('settingsModal').classList.add('show');storageStatus() }
+function closeModal(id){$(id).classList.remove('show')}
+function toast(s){$('toast').textContent=s;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),1800)}
+async function setCurrency(v){state.currency=v;await save();render()}
+async function backupNow(){
+ let data=JSON.stringify({...state,backupCreatedAt:new Date().toISOString()},null,2),blob=new Blob([data],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='My-Finance-Backup-'+today()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('Backup file created')
+}
+async function restoreFile(file){
+ if(!file)return;try{let d=JSON.parse(await file.text());if(!validState(normalize(d)))throw Error('invalid');if(!confirm('এই backup দিয়ে বর্তমান হিসাব replace করবেন?'))return;state=normalize(d);await save();closeModal('settingsModal');render();toast('Backup restored')}catch(e){toast('Invalid backup file')}
+}
+async function recoverPrevious(){
+ try{let a=await new Promise((resolve,reject)=>{let arr=[],r=db.transaction(BACKUPS,'readonly').objectStore(BACKUPS).openCursor(null,'prev');r.onsuccess=()=>{let c=r.result;if(c){arr.push(c.value);if(arr.length<2)c.continue();else resolve(arr)}else resolve(arr)};r.onerror=()=>reject(r.error)});let old=a[1]||a[0];if(!old)return toast('No previous backup');if(confirm('Previous local backup restore করবেন?')){state=normalize(old);await save();closeModal('settingsModal');render();toast('Previous backup restored')}}catch(e){toast('Recovery failed')}
+}
+async function storageStatus(){if(!$('storageStatus'))return;try{let p=navigator.storage?.persisted?await navigator.storage.persisted():false;$('storageStatus').textContent='IndexedDB: Active · localStorage: Active · Persistent permission: '+(p?'Granted':'Not guaranteed')}catch(e){$('storageStatus').textContent='IndexedDB: Active · localStorage: Active'}}
+async function printReport(){
+ let a=monthTx(),html=`<html><head><title>My Finance Report</title><style>body{font-family:Arial;padding:20px}table{width:100%;border-collapse:collapse}td,th{padding:8px;border:1px solid #ddd;text-align:left}.r{text-align:right}</style></head><body><h1>My Finance</h1><h2>${monthName(cy,cm)}</h2><p>Income: ${money(sum('income',a))}<br>Expense: ${money(sum('expense',a))}<br>Net: ${money(sum('income',a)-sum('expense',a))}</p><table><tr><th>Date</th><th>Type</th><th>Category</th><th>Note</th><th class="r">Amount</th></tr>${a.map(x=>`<tr><td>${esc(x.date)}</td><td>${esc(x.type)}</td><td>${esc(x.category)}</td><td>${esc(x.note||'')}</td><td class="r">${money(x.amount)}</td></tr>`).join('')}</table><script>window.onload=()=>setTimeout(()=>window.print(),300)<\/script></body></html>`;
+ let w=window.open('','_blank');if(w){w.document.write(html);w.document.close()}else toast('Popup blocked')
+}
+async function hash(s){let b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
+function hasPin(){return !!localStorage.getItem('myFinancePinHash')}
+async function changePin(){let p=prompt('নতুন 4-6 digit PIN দিন');if(!/^\d{4,6}$/.test(p||''))return toast('PIN 4-6 digit হতে হবে');localStorage.setItem('myFinancePinHash',await hash(p));updateLockStatus();toast('PIN set')}
+function removePin(){if(!hasPin())return;let p=prompt('বর্তমান PIN দিন');hash(p||'').then(h=>{if(h===localStorage.getItem('myFinancePinHash')){localStorage.removeItem('myFinancePinHash');updateLockStatus();toast('PIN removed')}else toast('Wrong PIN')})}
+function updateLockStatus(){if($('lockStatus'))$('lockStatus').textContent=hasPin()?'PIN enabled':'PIN not enabled'}
+async function unlock(){let p=$('unlockPin').value;if((await hash(p))===localStorage.getItem('myFinancePinHash')){$('lockScreen').classList.remove('show');$('unlockPin').value=''}else $('lockMsg').textContent='ভুল PIN'}
+function initLock(){if(hasPin())$('lockScreen').classList.add('show')}
+(async function(){
+ try{await openDB();await loadState();render();setTimeout(initLock,200)}
+ catch(e){console.error(e);state=normalize({transactions:[],notes:[],categories:[],archives:{},loans:[],currency:'৳'});render()}
+})();
+window.addEventListener('resize',()=>{if(state){drawChart($('chart'),monthTx());drawDaily($('dailyChart'),monthTx())}});
+</script>
+</body>
+  </html>
