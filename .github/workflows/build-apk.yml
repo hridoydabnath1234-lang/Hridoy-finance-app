@@ -22,8 +22,16 @@ jobs:
 
       - name: Create Android project
         run: |
+          mkdir -p app/src/main/assets
           mkdir -p app/src/main/java/com/hridoy/finance
           mkdir -p app/src/main/res/values
+
+          if [ ! -f index.html ]; then
+            echo "ERROR: index.html not found in repository root"
+            exit 1
+          fi
+
+          cp index.html app/src/main/assets/index.html
 
           cat > settings.gradle <<'EOF'
           pluginManagement {
@@ -33,7 +41,6 @@ jobs:
                   gradlePluginPortal()
               }
           }
-
           dependencyResolutionManagement {
               repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
               repositories {
@@ -41,7 +48,6 @@ jobs:
                   mavenCentral()
               }
           }
-
           rootProject.name = "HridoyFinance"
           include(":app")
           EOF
@@ -54,6 +60,7 @@ jobs:
 
           cat > gradle.properties <<'EOF'
           android.useAndroidX=true
+          org.gradle.jvmargs=-Xmx2048m
           EOF
 
           cat > app/build.gradle <<'EOF'
@@ -69,17 +76,18 @@ jobs:
                   applicationId 'com.hridoy.finance'
                   minSdk 23
                   targetSdk 35
-                  versionCode 2
-                  versionName '1.1'
+                  versionCode 3
+                  versionName '1.2'
               }
+          }
+
+          dependencies {
+              implementation 'androidx.webkit:webkit:1.12.1'
           }
           EOF
 
           cat > app/src/main/AndroidManifest.xml <<'EOF'
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
-              <uses-permission android:name="android.permission.INTERNET"/>
-
               <application
                   android:theme="@style/AppTheme"
                   android:label="My Finance App"
@@ -97,20 +105,19 @@ jobs:
                       </intent-filter>
 
                   </activity>
-
               </application>
-
           </manifest>
           EOF
 
           cat > app/src/main/res/values/styles.xml <<'EOF'
           <resources>
-              <style name="AppTheme" parent="android:style/Theme.Material.Light.NoActionBar">
+              <style name="AppTheme"
+                  parent="android:style/Theme.Material.Light.NoActionBar">
                   <item name="android:fontFamily">sans</item>
-                  <item name="android:colorAccent">#2563eb</item>
+                  <item name="android:colorAccent">#673de6</item>
                   <item name="android:windowLightStatusBar">true</item>
-                  <item name="android:navigationBarColor">#ffffff</item>
                   <item name="android:statusBarColor">#ffffff</item>
+                  <item name="android:navigationBarColor">#ffffff</item>
               </style>
           </resources>
           EOF
@@ -124,9 +131,9 @@ jobs:
           import android.webkit.WebSettings;
           import android.webkit.WebView;
           import android.webkit.WebViewClient;
+          import androidx.webkit.WebViewAssetLoader;
 
           public class MainActivity extends Activity {
-
               private WebView webView;
 
               @Override
@@ -137,26 +144,45 @@ jobs:
                   setContentView(webView);
 
                   WebSettings settings = webView.getSettings();
-
                   settings.setJavaScriptEnabled(true);
                   settings.setDomStorageEnabled(true);
                   settings.setDatabaseEnabled(true);
-                  settings.setAllowFileAccess(true);
+                  settings.setAllowFileAccess(false);
                   settings.setAllowContentAccess(true);
                   settings.setJavaScriptCanOpenWindowsAutomatically(true);
                   settings.setSupportMultipleWindows(false);
 
-                  webView.setWebViewClient(new WebViewClient());
+                  WebViewAssetLoader assetLoader =
+                      new WebViewAssetLoader.Builder()
+                          .addPathHandler(
+                              "/assets/",
+                              new WebViewAssetLoader.AssetsPathHandler(this)
+                          )
+                          .build();
+
+                  webView.setWebViewClient(new WebViewClient() {
+                      @Override
+                      public android.webkit.WebResourceResponse
+                      shouldInterceptRequest(
+                          WebView view,
+                          android.webkit.WebResourceRequest request
+                      ) {
+                          return assetLoader.shouldInterceptRequest(
+                              request.getUrl()
+                          );
+                      }
+                  });
+
                   webView.setWebChromeClient(new WebChromeClient());
 
                   webView.loadUrl(
-                      "https://hridoydabnath1234-lang.github.io/Hridoy-finance-app/"
+                      "https://appassets.androidplatform.net/assets/index.html"
                   );
               }
 
               @Override
               public void onBackPressed() {
-                  if (webView.canGoBack()) {
+                  if (webView != null && webView.canGoBack()) {
                       webView.goBack();
                   } else {
                       super.onBackPressed();
@@ -173,5 +199,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Hridoy-Finance-App
+          name: Hridoy-Finance-Offline-APK
           path: app/build/outputs/apk/debug/app-debug.apk
